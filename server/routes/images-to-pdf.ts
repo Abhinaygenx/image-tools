@@ -15,12 +15,20 @@ export const handleImagesToPdf: RequestHandler = async (req, res) => {
     }
 
     // Validate that all files are images
-    const validImageTypes = ["image/jpeg", "image/png", "image/webp", "image/tiff"];
-    const invalidFiles = files.filter(f => !validImageTypes.includes(f.mimetype));
+    const validImageTypes = [
+      "image/jpeg",
+      "image/png",
+      "image/webp",
+      "image/tiff",
+    ];
+    const invalidFiles = files.filter(
+      (f) => !validImageTypes.includes(f.mimetype),
+    );
 
     if (invalidFiles.length > 0) {
       return res.status(400).json({
-        error: "Invalid file types. Only JPEG, PNG, WebP, and TIFF images are supported.",
+        error:
+          "Invalid file types. Only JPEG, PNG, WebP, and TIFF images are supported.",
         success: false,
       });
     }
@@ -39,7 +47,10 @@ export const handleImagesToPdf: RequestHandler = async (req, res) => {
           });
         }
       } catch (error) {
-        console.error(`Error reading metadata for ${file.originalname}:`, error);
+        console.error(
+          `Error reading metadata for ${file.originalname}:`,
+          error,
+        );
       }
     }
 
@@ -62,7 +73,10 @@ export const handleImagesToPdf: RequestHandler = async (req, res) => {
 
     // Set response headers for PDF download
     res.setHeader("Content-Type", "application/pdf");
-    res.setHeader("Content-Disposition", "attachment; filename=\"converted.pdf\"");
+    res.setHeader(
+      "Content-Disposition",
+      'attachment; filename="converted.pdf"',
+    );
 
     // Pipe PDF to response
     pdf.pipe(res);
@@ -100,7 +114,10 @@ export const handleImagesToPdf: RequestHandler = async (req, res) => {
           height: MAX_HEIGHT,
         });
       } catch (error) {
-        console.error(`Error processing file ${imageMetadata[i].file.originalname}:`, error);
+        console.error(
+          `Error processing file ${imageMetadata[i].file.originalname}:`,
+          error,
+        );
         // Continue with next file instead of failing completely
         continue;
       }

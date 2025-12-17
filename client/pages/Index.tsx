@@ -54,12 +54,14 @@ export default function Index() {
     {
       icon: Zap,
       title: "Lightning Fast",
-      description: "Process your documents in seconds with our optimized engine",
+      description:
+        "Process your documents in seconds with our optimized engine",
     },
     {
       icon: Shield,
       title: "Secure & Private",
-      description: "Your files are encrypted and automatically deleted after processing",
+      description:
+        "Your files are encrypted and automatically deleted after processing",
     },
     {
       icon: Smartphone,
@@ -133,20 +135,35 @@ export default function Index() {
 
           {/* Hero Stats */}
           <div className="mt-16 grid grid-cols-1 gap-4 sm:grid-cols-3">
-            <div className="animate-fade-in rounded-xl border border-border bg-card p-8" style={{ animationDelay: "0ms" }}>
+            <div
+              className="animate-fade-in rounded-xl border border-border bg-card p-8"
+              style={{ animationDelay: "0ms" }}
+            >
               <div className="text-4xl font-bold text-primary">100%</div>
               <p className="mt-2 text-foreground/70">Secure & Private</p>
-              <p className="mt-1 text-sm text-foreground/50">Your files are encrypted and auto-deleted</p>
+              <p className="mt-1 text-sm text-foreground/50">
+                Your files are encrypted and auto-deleted
+              </p>
             </div>
-            <div className="animate-fade-in rounded-xl border border-border bg-card p-8" style={{ animationDelay: "100ms" }}>
+            <div
+              className="animate-fade-in rounded-xl border border-border bg-card p-8"
+              style={{ animationDelay: "100ms" }}
+            >
               <div className="text-4xl font-bold text-primary">&lt;5s</div>
               <p className="mt-2 text-foreground/70">Lightning Fast</p>
-              <p className="mt-1 text-sm text-foreground/50">Most conversions complete instantly</p>
+              <p className="mt-1 text-sm text-foreground/50">
+                Most conversions complete instantly
+              </p>
             </div>
-            <div className="animate-fade-in rounded-xl border border-border bg-card p-8" style={{ animationDelay: "200ms" }}>
+            <div
+              className="animate-fade-in rounded-xl border border-border bg-card p-8"
+              style={{ animationDelay: "200ms" }}
+            >
               <div className="text-4xl font-bold text-primary">6+</div>
               <p className="mt-2 text-foreground/70">Tools Available</p>
-              <p className="mt-1 text-sm text-foreground/50">All formats supported and more coming</p>
+              <p className="mt-1 text-sm text-foreground/50">
+                All formats supported and more coming
+              </p>
             </div>
           </div>
         </div>
@@ -171,11 +188,7 @@ export default function Index() {
             {tools.map((tool, index) => {
               const Icon = tool.icon;
               return (
-                <Link
-                  key={index}
-                  to={tool.href}
-                  className="group card-base"
-                >
+                <Link key={index} to={tool.href} className="group card-base">
                   <div className="mb-4 inline-flex rounded-lg bg-gradient-to-br from-primary/10 to-accent/10 p-3 transition-all duration-200 group-hover:from-primary/20 group-hover:to-accent/20">
                     <Icon className="h-6 w-6 text-primary" />
                   </div>
@@ -240,7 +253,10 @@ export default function Index() {
             <p className="mt-4 text-primary-foreground/90">
               Convert your first document today, no sign up required
             </p>
-            <Link to="/tools" className="mt-8 inline-flex items-center gap-2 rounded-lg bg-primary-foreground px-8 py-3 font-semibold text-primary transition-all duration-200 hover:shadow-lg active:scale-95">
+            <Link
+              to="/tools"
+              className="mt-8 inline-flex items-center gap-2 rounded-lg bg-primary-foreground px-8 py-3 font-semibold text-primary transition-all duration-200 hover:shadow-lg active:scale-95"
+            >
               Start Converting Now
               <ChevronRight className="h-5 w-5" />
             </Link>
@@ -267,17 +283,26 @@ export default function Index() {
               <h4 className="mb-4 font-semibold text-foreground">Tools</h4>
               <ul className="space-y-2">
                 <li>
-                  <a href="#" className="text-sm text-foreground/70 hover:text-foreground transition-colors">
+                  <a
+                    href="#"
+                    className="text-sm text-foreground/70 hover:text-foreground transition-colors"
+                  >
                     Images to PDF
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="text-sm text-foreground/70 hover:text-foreground transition-colors">
+                  <a
+                    href="#"
+                    className="text-sm text-foreground/70 hover:text-foreground transition-colors"
+                  >
                     PDF to Word
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="text-sm text-foreground/70 hover:text-foreground transition-colors">
+                  <a
+                    href="#"
+                    className="text-sm text-foreground/70 hover:text-foreground transition-colors"
+                  >
                     Merge PDF
                   </a>
                 </li>
@@ -287,17 +312,26 @@ export default function Index() {
               <h4 className="mb-4 font-semibold text-foreground">Company</h4>
               <ul className="space-y-2">
                 <li>
-                  <a href="#" className="text-sm text-foreground/70 hover:text-foreground transition-colors">
+                  <a
+                    href="#"
+                    className="text-sm text-foreground/70 hover:text-foreground transition-colors"
+                  >
                     About
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="text-sm text-foreground/70 hover:text-foreground transition-colors">
+                  <a
+                    href="#"
+                    className="text-sm text-foreground/70 hover:text-foreground transition-colors"
+                  >
                     Blog
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="text-sm text-foreground/70 hover:text-foreground transition-colors">
+                  <a
+                    href="#"
+                    className="text-sm text-foreground/70 hover:text-foreground transition-colors"
+                  >
                     Contact
                   </a>
                 </li>
@@ -307,12 +341,18 @@ export default function Index() {
               <h4 className="mb-4 font-semibold text-foreground">Legal</h4>
               <ul className="space-y-2">
                 <li>
-                  <a href="#" className="text-sm text-foreground/70 hover:text-foreground transition-colors">
+                  <a
+                    href="#"
+                    className="text-sm text-foreground/70 hover:text-foreground transition-colors"
+                  >
                     Privacy
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="text-sm text-foreground/70 hover:text-foreground transition-colors">
+                  <a
+                    href="#"
+                    className="text-sm text-foreground/70 hover:text-foreground transition-colors"
+                  >
                     Terms
                   </a>
                 </li>

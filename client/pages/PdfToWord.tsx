@@ -176,7 +176,9 @@ export default function PdfToWord() {
           {success && (
             <div className="mb-6 flex items-center gap-3 rounded-lg border border-green-500/30 bg-green-500/10 p-4 text-green-700">
               <div className="flex-1">
-                <p className="font-medium">✓ Word document created successfully!</p>
+                <p className="font-medium">
+                  ✓ Word document created successfully!
+                </p>
               </div>
             </div>
           )}
@@ -235,11 +237,16 @@ export default function PdfToWord() {
 
           {/* Info Section */}
           <div className="mt-12 rounded-xl border border-border bg-card p-6">
-            <h3 className="text-lg font-semibold text-foreground mb-4">How it works</h3>
+            <h3 className="text-lg font-semibold text-foreground mb-4">
+              How it works
+            </h3>
             <ul className="space-y-3 text-foreground/70">
               <li className="flex gap-3">
                 <span className="font-semibold text-primary">1.</span>
-                <span>Upload your PDF file using the drag-and-drop area or file selector</span>
+                <span>
+                  Upload your PDF file using the drag-and-drop area or file
+                  selector
+                </span>
               </li>
               <li className="flex gap-3">
                 <span className="font-semibold text-primary">2.</span>
@@ -247,7 +254,9 @@ export default function PdfToWord() {
               </li>
               <li className="flex gap-3">
                 <span className="font-semibold text-primary">3.</span>
-                <span>Click "Convert to Word" to create an editable document</span>
+                <span>
+                  Click "Convert to Word" to create an editable document
+                </span>
               </li>
               <li className="flex gap-3">
                 <span className="font-semibold text-primary">4.</span>
@@ -256,7 +265,10 @@ export default function PdfToWord() {
             </ul>
             <div className="mt-6 pt-6 border-t border-border">
               <p className="text-sm text-foreground/70">
-                <strong>Note:</strong> The conversion extracts text content from your PDF. If your PDF is image-based or scanned, the conversion may not work. For best results, use PDFs with embedded text content.
+                <strong>Note:</strong> The conversion extracts text content from
+                your PDF. If your PDF is image-based or scanned, the conversion
+                may not work. For best results, use PDFs with embedded text
+                content.
               </p>
             </div>
           </div>
