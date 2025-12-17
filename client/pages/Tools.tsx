@@ -17,6 +17,8 @@ export default function Tools() {
       description: "Combine multiple images into one PDF file",
       color: "from-blue-500 to-blue-600",
       lightColor: "from-blue-50 to-blue-100",
+      route: "/tools/images-to-pdf",
+      available: true,
     },
     {
       id: 2,
@@ -25,6 +27,8 @@ export default function Tools() {
       description: "Convert PDF documents to editable Word format",
       color: "from-purple-500 to-purple-600",
       lightColor: "from-purple-50 to-purple-100",
+      route: "/tools/pdf-to-word",
+      available: false,
     },
     {
       id: 3,
@@ -33,6 +37,8 @@ export default function Tools() {
       description: "Convert image files to editable Word documents",
       color: "from-pink-500 to-pink-600",
       lightColor: "from-pink-50 to-pink-100",
+      route: "/tools/image-to-word",
+      available: false,
     },
     {
       id: 4,
@@ -41,6 +47,8 @@ export default function Tools() {
       description: "Merge multiple PDF files into a single document",
       color: "from-green-500 to-green-600",
       lightColor: "from-green-50 to-green-100",
+      route: "/tools/merge-pdf",
+      available: false,
     },
     {
       id: 5,
@@ -49,6 +57,8 @@ export default function Tools() {
       description: "Reduce your PDF file size while keeping quality",
       color: "from-orange-500 to-orange-600",
       lightColor: "from-orange-50 to-orange-100",
+      route: "/tools/compress-pdf",
+      available: false,
     },
     {
       id: 6,
@@ -57,6 +67,8 @@ export default function Tools() {
       description: "Protect your PDF with a password",
       color: "from-red-500 to-red-600",
       lightColor: "from-red-50 to-red-100",
+      route: "/tools/protect-pdf",
+      available: false,
     },
   ];
 
