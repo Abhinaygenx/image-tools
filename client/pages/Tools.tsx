@@ -28,7 +28,7 @@ export default function Tools() {
       color: "from-purple-500 to-purple-600",
       lightColor: "from-purple-50 to-purple-100",
       route: "/tools/pdf-to-word",
-      available: false,
+      available: true,
     },
     {
       id: 3,
@@ -115,22 +115,20 @@ export default function Tools() {
                   <div className="absolute inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-10 rounded-xl">
                     <div className="text-center">
                       <p className="text-white font-semibold">Coming Soon</p>
-                      <p className="text-white/80 text-sm mt-1">
-                        This tool is being developed
-                      </p>
+                      <p className="text-white/80 text-sm mt-1">This tool is being developed</p>
                     </div>
                   </div>
                 )}
-                <div
-                  className={`mb-6 inline-flex rounded-lg bg-gradient-to-br ${tool.lightColor} p-4 transition-all duration-200 group-hover:scale-110`}
-                >
+                <div className={`mb-6 inline-flex rounded-lg bg-gradient-to-br ${tool.lightColor} p-4 transition-all duration-200 group-hover:scale-110`}>
                   <Icon className="h-8 w-8 text-primary" />
                 </div>
 
                 <h3 className="text-xl font-semibold text-foreground">
                   {tool.title}
                 </h3>
-                <p className="mt-2 text-foreground/70">{tool.description}</p>
+                <p className="mt-2 text-foreground/70">
+                  {tool.description}
+                </p>
 
                 <div className="mt-8 flex flex-col gap-3">
                   {tool.available ? (
