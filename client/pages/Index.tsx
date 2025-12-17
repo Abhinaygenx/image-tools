@@ -131,17 +131,23 @@ export default function Index() {
             </div>
           </div>
 
-          {/* Hero Visual */}
+          {/* Hero Stats */}
           <div className="mt-16 grid grid-cols-1 gap-4 sm:grid-cols-3">
-            {[1, 2, 3].map((i) => (
-              <div
-                key={i}
-                className="animate-fade-in rounded-xl bg-gradient-to-br from-primary/10 to-accent/10 p-8"
-                style={{ animationDelay: `${i * 100}ms` }}
-              >
-                <div className="h-32 rounded-lg bg-gradient-to-br from-primary/20 to-accent/20" />
-              </div>
-            ))}
+            <div className="animate-fade-in rounded-xl border border-border bg-card p-8" style={{ animationDelay: "0ms" }}>
+              <div className="text-4xl font-bold text-primary">100%</div>
+              <p className="mt-2 text-foreground/70">Secure & Private</p>
+              <p className="mt-1 text-sm text-foreground/50">Your files are encrypted and auto-deleted</p>
+            </div>
+            <div className="animate-fade-in rounded-xl border border-border bg-card p-8" style={{ animationDelay: "100ms" }}>
+              <div className="text-4xl font-bold text-primary">&lt;5s</div>
+              <p className="mt-2 text-foreground/70">Lightning Fast</p>
+              <p className="mt-1 text-sm text-foreground/50">Most conversions complete instantly</p>
+            </div>
+            <div className="animate-fade-in rounded-xl border border-border bg-card p-8" style={{ animationDelay: "200ms" }}>
+              <div className="text-4xl font-bold text-primary">6+</div>
+              <p className="mt-2 text-foreground/70">Tools Available</p>
+              <p className="mt-1 text-sm text-foreground/50">All formats supported and more coming</p>
+            </div>
           </div>
         </div>
       </section>
