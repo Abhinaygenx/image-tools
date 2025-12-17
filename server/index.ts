@@ -4,9 +4,17 @@ import cors from "cors";
 import multer from "multer";
 import { handleDemo } from "./routes/demo";
 import { handleImagesToPdf } from "./routes/images-to-pdf";
+import { handlePdfToWord } from "./routes/pdf-to-word";
 
 // Configure multer for file uploads
-const upload = multer({
+const uploadMultiple = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 50 * 1024 * 1024, // 50MB per file
+  },
+});
+
+const uploadSingle = multer({
   storage: multer.memoryStorage(),
   limits: {
     fileSize: 50 * 1024 * 1024, // 50MB per file
@@ -30,7 +38,8 @@ export function createServer() {
   app.get("/api/demo", handleDemo);
 
   // Document conversion endpoints
-  app.post("/api/convert/images-to-pdf", upload.array("images", 50), handleImagesToPdf);
+  app.post("/api/convert/images-to-pdf", uploadMultiple.array("images", 50), handleImagesToPdf);
+  app.post("/api/convert/pdf-to-word", uploadSingle.single("pdf"), handlePdfToWord);
 
   return app;
 }
