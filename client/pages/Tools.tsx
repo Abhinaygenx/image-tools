@@ -109,8 +109,16 @@ export default function Tools() {
             return (
               <div
                 key={tool.id}
-                className="group cursor-pointer card-base overflow-hidden transition-all duration-300 hover:-translate-y-1"
+                className="group card-base overflow-hidden transition-all duration-300 hover:-translate-y-1 relative"
               >
+                {!tool.available && (
+                  <div className="absolute inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-10 rounded-xl">
+                    <div className="text-center">
+                      <p className="text-white font-semibold">Coming Soon</p>
+                      <p className="text-white/80 text-sm mt-1">This tool is being developed</p>
+                    </div>
+                  </div>
+                )}
                 <div className={`mb-6 inline-flex rounded-lg bg-gradient-to-br ${tool.lightColor} p-4 transition-all duration-200 group-hover:scale-110`}>
                   <Icon className="h-8 w-8 text-primary" />
                 </div>
@@ -123,13 +131,23 @@ export default function Tools() {
                 </p>
 
                 <div className="mt-8 flex flex-col gap-3">
-                  <button
-                    className={`flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r ${tool.color} px-4 py-3 font-semibold text-white transition-all duration-200 hover:shadow-lg active:scale-95`}
-                  >
-                    <UploadCloud className="h-5 w-5" />
-                    Upload Files
-                  </button>
-                  <button className="btn-ghost">Preview</button>
+                  {tool.available ? (
+                    <Link
+                      to={tool.route}
+                      className={`flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r ${tool.color} px-4 py-3 font-semibold text-white transition-all duration-200 hover:shadow-lg active:scale-95`}
+                    >
+                      <UploadCloud className="h-5 w-5" />
+                      Upload Files
+                    </Link>
+                  ) : (
+                    <button
+                      disabled
+                      className="flex items-center justify-center gap-2 rounded-lg bg-muted px-4 py-3 font-semibold text-muted-foreground cursor-not-allowed opacity-50"
+                    >
+                      <UploadCloud className="h-5 w-5" />
+                      Coming Soon
+                    </button>
+                  )}
                 </div>
               </div>
             );
