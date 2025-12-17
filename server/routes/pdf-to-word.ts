@@ -1,5 +1,5 @@
 import { RequestHandler } from "express";
-import * as pdfParse from "pdf-parse";
+import pdfParse from "pdf-parse";
 import { Document, Packer, Paragraph, TextRun } from "docx";
 
 export const handlePdfToWord: RequestHandler = async (req, res) => {
