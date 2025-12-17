@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import Tools from "./pages/Tools";
 import ImagesToPdf from "./pages/ImagesToPdf";
+import PdfToWord from "./pages/PdfToWord";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -21,6 +22,7 @@ export default function App() {
             <Route path="/" element={<Index />} />
             <Route path="/tools" element={<Tools />} />
             <Route path="/tools/images-to-pdf" element={<ImagesToPdf />} />
+            <Route path="/tools/pdf-to-word" element={<PdfToWord />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
