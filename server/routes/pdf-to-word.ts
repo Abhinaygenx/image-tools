@@ -25,23 +25,33 @@ export const handlePdfToWord: RequestHandler = async (req, res) => {
     // Parse PDF and extract text
     let pdfData;
     try {
-      pdfData = await pdfParse(file.buffer);
+      // Ensure the buffer is properly handled
+      const pdf = await pdfParse(file.buffer);
+      pdfData = pdf;
     } catch (error) {
       console.error("Error parsing PDF:", error);
       return res.status(400).json({
-        error:
-          "Could not parse PDF file. Please ensure it's a valid PDF document.",
+        error: "Could not parse PDF file. Please ensure it's a valid PDF document.",
         success: false,
       });
     }
 
     // Extract text from PDF
-    const text = pdfData.text || "";
+    let text = "";
+
+    if (pdfData.text) {
+      text = pdfData.text;
+    } else if (pdfData.version) {
+      // If text extraction failed but PDF is valid, provide helpful message
+      return res.status(400).json({
+        error: "The PDF file appears to be valid but contains no extractable text. This might be a scanned document or image-based PDF.",
+        success: false,
+      });
+    }
 
     if (!text.trim()) {
       return res.status(400).json({
-        error:
-          "No text content found in PDF. The PDF might be image-based or encrypted.",
+        error: "No text content found in PDF. The PDF might be image-based or encrypted.",
         success: false,
       });
     }
@@ -49,56 +59,45 @@ export const handlePdfToWord: RequestHandler = async (req, res) => {
     // Split text into paragraphs (by double newlines or single newlines)
     const paragraphs = text
       .split(/\n\n+|\n/)
-      .map((para) => para.trim())
-      .filter((para) => para.length > 0)
-      .map(
-        (para) =>
-          new Paragraph({
-            text: para,
-            spacing: {
-              line: 240, // 1.0 line spacing
-              after: 200, // Space after paragraph
-            },
-          }),
-      );
+      .map(para => para.trim())
+      .filter(para => para.length > 0)
+      .map(para => new Paragraph({
+        text: para,
+        spacing: {
+          line: 240, // 1.0 line spacing
+          after: 200, // Space after paragraph
+        },
+      }));
 
     // Create Word document
     const doc = new Document({
-      sections: [
-        {
-          properties: {},
-          children: [
-            new Paragraph({
-              text: `Converted from: ${file.originalname}`,
-              spacing: {
-                after: 400,
-              },
-              bold: true,
-            }),
-            new Paragraph({
-              text: "",
-              spacing: {
-                after: 200,
-              },
-            }),
-            ...paragraphs,
-          ],
-        },
-      ],
+      sections: [{
+        properties: {},
+        children: [
+          new Paragraph({
+            text: `Converted from: ${file.originalname}`,
+            spacing: {
+              after: 400,
+            },
+            bold: true,
+          }),
+          new Paragraph({
+            text: "",
+            spacing: {
+              after: 200,
+            },
+          }),
+          ...paragraphs,
+        ],
+      }],
     });
 
     // Generate Word document buffer
     const buffer = await Packer.toBuffer(doc);
 
     // Set response headers for Word document download
-    res.setHeader(
-      "Content-Type",
-      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-    );
-    res.setHeader(
-      "Content-Disposition",
-      `attachment; filename="converted-${Date.now()}.docx"`,
-    );
+    res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+    res.setHeader("Content-Disposition", `attachment; filename="converted-${Date.now()}.docx"`);
     res.setHeader("Content-Length", buffer.length);
 
     // Send the document
