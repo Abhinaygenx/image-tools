@@ -48,7 +48,7 @@ export default function Tools() {
       color: "from-green-500 to-green-600",
       lightColor: "from-green-50 to-green-100",
       route: "/tools/merge-pdf",
-      available: false,
+      available: true,
     },
     {
       id: 5,
