@@ -61,6 +61,7 @@ export const handleProtectPdf: RequestHandler = async (req, res) => {
       // Encrypt the PDF with the provided password
       // This will require the password to open the document
       try {
+        // First, try to encrypt the existing PDF
         await pdf.encrypt({
           userPassword: password,
           ownerPassword: password,
@@ -75,11 +76,42 @@ export const handleProtectPdf: RequestHandler = async (req, res) => {
           },
         });
       } catch (encryptError) {
-        console.error("Error encrypting PDF:", encryptError);
-        return res.status(400).json({
-          error: "Failed to encrypt PDF. The file may be too large or have unsupported features.",
-          success: false,
-        });
+        console.error("Error encrypting PDF directly:", encryptError);
+
+        // If direct encryption fails, try to rebuild the PDF by copying pages
+        try {
+          console.log("Attempting to rebuild PDF for encryption...");
+          const newPdf = await PDFDocument.create();
+          const pages = pdf.getPages();
+
+          for (const page of pages) {
+            const copiedPage = await newPdf.embedPage(page);
+            newPdf.addPage(copiedPage);
+          }
+
+          // Now try to encrypt the rebuilt PDF
+          await newPdf.encrypt({
+            userPassword: password,
+            ownerPassword: password,
+            permissions: {
+              printing: "fullQuality",
+              modifyContents: false,
+              copying: false,
+              modifyAnnotations: false,
+              fillingForms: false,
+              contentAccessibility: true,
+              documentAssembly: false,
+            },
+          });
+
+          pdf = newPdf;
+        } catch (rebuildError) {
+          console.error("Error rebuilding PDF for encryption:", rebuildError);
+          return res.status(400).json({
+            error: "This PDF file has special formatting that prevents password protection. Try opening it in Adobe Reader and re-saving it, then try again.",
+            success: false,
+          });
+        }
       }
 
       // Save the protected PDF
