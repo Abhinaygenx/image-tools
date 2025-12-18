@@ -8,6 +8,7 @@ import Tools from "./pages/Tools";
 import ImagesToPdf from "./pages/ImagesToPdf";
 import PdfToWord from "./pages/PdfToWord";
 import ImageToWord from "./pages/ImageToWord";
+import MergePdf from "./pages/MergePdf";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -25,6 +26,7 @@ export default function App() {
             <Route path="/tools/images-to-pdf" element={<ImagesToPdf />} />
             <Route path="/tools/pdf-to-word" element={<PdfToWord />} />
             <Route path="/tools/image-to-word" element={<ImageToWord />} />
+            <Route path="/tools/merge-pdf" element={<MergePdf />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
