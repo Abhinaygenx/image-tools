@@ -39,7 +39,8 @@ export const handlePdfToWord: RequestHandler = async (req, res) => {
       } catch (retryError) {
         console.error("Error parsing PDF (retry):", retryError);
         return res.status(400).json({
-          error: "Could not parse PDF file. It may be corrupted, encrypted, or in an unsupported format.",
+          error:
+            "Could not parse PDF file. It may be corrupted, encrypted, or in an unsupported format.",
           success: false,
         });
       }
@@ -50,7 +51,8 @@ export const handlePdfToWord: RequestHandler = async (req, res) => {
 
     if (!text.trim()) {
       return res.status(400).json({
-        error: "No text content found in PDF. The PDF might be image-based, scanned, or have protection that prevents text extraction.",
+        error:
+          "No text content found in PDF. The PDF might be image-based, scanned, or have protection that prevents text extraction.",
         success: false,
       });
     }
@@ -74,14 +76,14 @@ export const handlePdfToWord: RequestHandler = async (req, res) => {
         },
       }),
       ...lines.map(
-        line =>
+        (line) =>
           new Paragraph({
             text: line || "", // Preserve empty lines for spacing
             spacing: {
               line: 240,
               after: 0,
             },
-          })
+          }),
       ),
     ];
 
@@ -101,11 +103,11 @@ export const handlePdfToWord: RequestHandler = async (req, res) => {
     // Set response headers for Word document download
     res.setHeader(
       "Content-Type",
-      "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
     );
     res.setHeader(
       "Content-Disposition",
-      `attachment; filename="converted-${Date.now()}.docx"`
+      `attachment; filename="converted-${Date.now()}.docx"`,
     );
     res.setHeader("Content-Length", buffer.length);
 

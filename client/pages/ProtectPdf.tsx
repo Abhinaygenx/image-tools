@@ -1,6 +1,15 @@
 import { useState, useRef } from "react";
 import { Link } from "react-router-dom";
-import { FileText, ArrowLeft, Upload, X, Download, Loader, Eye, EyeOff } from "lucide-react";
+import {
+  FileText,
+  ArrowLeft,
+  Upload,
+  X,
+  Download,
+  Loader,
+  Eye,
+  EyeOff,
+} from "lucide-react";
 
 export default function ProtectPdf() {
   const [pdfFile, setPdfFile] = useState<File | null>(null);
@@ -301,15 +310,22 @@ export default function ProtectPdf() {
 
           {/* Info Section */}
           <div className="mt-12 rounded-xl border border-border bg-card p-6">
-            <h3 className="text-lg font-semibold text-foreground mb-4">How it works</h3>
+            <h3 className="text-lg font-semibold text-foreground mb-4">
+              How it works
+            </h3>
             <ul className="space-y-3 text-foreground/70">
               <li className="flex gap-3">
                 <span className="font-semibold text-primary">1.</span>
-                <span>Upload your PDF file using the drag-and-drop area or file selector</span>
+                <span>
+                  Upload your PDF file using the drag-and-drop area or file
+                  selector
+                </span>
               </li>
               <li className="flex gap-3">
                 <span className="font-semibold text-primary">2.</span>
-                <span>Enter and confirm your desired password (minimum 4 characters)</span>
+                <span>
+                  Enter and confirm your desired password (minimum 4 characters)
+                </span>
               </li>
               <li className="flex gap-3">
                 <span className="font-semibold text-primary">3.</span>
@@ -322,10 +338,14 @@ export default function ProtectPdf() {
             </ul>
             <div className="mt-6 pt-6 border-t border-border space-y-3">
               <p className="text-sm text-foreground/70">
-                <strong>Security:</strong> Password protection prevents unauthorized access to your PDF. Users will need to enter the password to open the document.
+                <strong>Security:</strong> Password protection prevents
+                unauthorized access to your PDF. Users will need to enter the
+                password to open the document.
               </p>
               <p className="text-sm text-foreground/70">
-                <strong>Restrictions:</strong> The protected PDF will have restrictions on copying, printing, and editing unless the password is provided.
+                <strong>Restrictions:</strong> The protected PDF will have
+                restrictions on copying, printing, and editing unless the
+                password is provided.
               </p>
             </div>
           </div>

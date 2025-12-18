@@ -21,7 +21,7 @@ export const handleMergePdf: RequestHandler = async (req, res) => {
     }
 
     // Validate that all files are PDFs
-    const invalidFiles = files.filter(f => f.mimetype !== "application/pdf");
+    const invalidFiles = files.filter((f) => f.mimetype !== "application/pdf");
 
     if (invalidFiles.length > 0) {
       return res.status(400).json({
@@ -60,12 +60,18 @@ export const handleMergePdf: RequestHandler = async (req, res) => {
           // Copy pages from this PDF to the merged document
           try {
             // Use copyPages for better content preservation
-            const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
-            copiedPages.forEach(page => {
+            const copiedPages = await mergedPdf.copyPages(
+              pdf,
+              pdf.getPageIndices(),
+            );
+            copiedPages.forEach((page) => {
               mergedPdf.addPage(page);
             });
           } catch (copyError) {
-            console.error(`Error copying pages from ${file.originalname}:`, copyError);
+            console.error(
+              `Error copying pages from ${file.originalname}:`,
+              copyError,
+            );
             // Fallback: try page-by-page embedding
             for (const page of pages) {
               try {
@@ -73,7 +79,10 @@ export const handleMergePdf: RequestHandler = async (req, res) => {
                 const copiedPage = await mergedPdf.embedPage(page);
                 mergedPdf.addPage([width, height], copiedPage);
               } catch (pageError) {
-                console.error(`Error processing page in ${file.originalname}:`, pageError);
+                console.error(
+                  `Error processing page in ${file.originalname}:`,
+                  pageError,
+                );
                 // Skip problematic pages but continue with others
               }
             }
@@ -90,7 +99,8 @@ export const handleMergePdf: RequestHandler = async (req, res) => {
       // Check if we have any pages in the merged PDF
       if (mergedPdf.getPageCount() === 0) {
         return res.status(400).json({
-          error: "No pages could be extracted from the provided PDFs. Please check your files.",
+          error:
+            "No pages could be extracted from the provided PDFs. Please check your files.",
           success: false,
         });
       }
@@ -102,7 +112,7 @@ export const handleMergePdf: RequestHandler = async (req, res) => {
       res.setHeader("Content-Type", "application/pdf");
       res.setHeader(
         "Content-Disposition",
-        `attachment; filename="merged-${Date.now()}.pdf"`
+        `attachment; filename="merged-${Date.now()}.pdf"`,
       );
       res.setHeader("Content-Length", mergedPdfBytes.length);
 
@@ -111,7 +121,8 @@ export const handleMergePdf: RequestHandler = async (req, res) => {
     } catch (error) {
       console.error("Error merging PDFs:", error);
       return res.status(400).json({
-        error: "Failed to merge PDF files. Please ensure all files are valid PDFs.",
+        error:
+          "Failed to merge PDF files. Please ensure all files are valid PDFs.",
         success: false,
       });
     }

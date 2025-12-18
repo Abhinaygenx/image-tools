@@ -235,11 +235,16 @@ export default function CompressPdf() {
 
           {/* Info Section */}
           <div className="mt-12 rounded-xl border border-border bg-card p-6">
-            <h3 className="text-lg font-semibold text-foreground mb-4">How it works</h3>
+            <h3 className="text-lg font-semibold text-foreground mb-4">
+              How it works
+            </h3>
             <ul className="space-y-3 text-foreground/70">
               <li className="flex gap-3">
                 <span className="font-semibold text-primary">1.</span>
-                <span>Upload your PDF file using the drag-and-drop area or file selector</span>
+                <span>
+                  Upload your PDF file using the drag-and-drop area or file
+                  selector
+                </span>
               </li>
               <li className="flex gap-3">
                 <span className="font-semibold text-primary">2.</span>
@@ -247,7 +252,9 @@ export default function CompressPdf() {
               </li>
               <li className="flex gap-3">
                 <span className="font-semibold text-primary">3.</span>
-                <span>Click "Compress PDF" to start the compression process</span>
+                <span>
+                  Click "Compress PDF" to start the compression process
+                </span>
               </li>
               <li className="flex gap-3">
                 <span className="font-semibold text-primary">4.</span>
@@ -256,7 +263,9 @@ export default function CompressPdf() {
             </ul>
             <div className="mt-6 pt-6 border-t border-border">
               <p className="text-sm text-foreground/70">
-                <strong>Note:</strong> Compression removes unnecessary metadata and optimizes the PDF structure. Most PDFs can be compressed by 20-40% without visible quality loss.
+                <strong>Note:</strong> Compression removes unnecessary metadata
+                and optimizes the PDF structure. Most PDFs can be compressed by
+                20-40% without visible quality loss.
               </p>
             </div>
           </div>

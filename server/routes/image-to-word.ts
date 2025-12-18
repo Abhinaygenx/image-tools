@@ -1,5 +1,14 @@
 import { RequestHandler } from "express";
-import { Document, Packer, Paragraph, Table, TableCell, TableRow, WidthType, BorderStyle } from "docx";
+import {
+  Document,
+  Packer,
+  Paragraph,
+  Table,
+  TableCell,
+  TableRow,
+  WidthType,
+  BorderStyle,
+} from "docx";
 import sharp from "sharp";
 import Tesseract from "tesseract.js";
 
@@ -16,12 +25,20 @@ export const handleImageToWord: RequestHandler = async (req, res) => {
     }
 
     // Validate that all files are images
-    const validImageTypes = ["image/jpeg", "image/png", "image/webp", "image/tiff"];
-    const invalidFiles = files.filter(f => !validImageTypes.includes(f.mimetype));
+    const validImageTypes = [
+      "image/jpeg",
+      "image/png",
+      "image/webp",
+      "image/tiff",
+    ];
+    const invalidFiles = files.filter(
+      (f) => !validImageTypes.includes(f.mimetype),
+    );
 
     if (invalidFiles.length > 0) {
       return res.status(400).json({
-        error: "Invalid file types. Only JPEG, PNG, WebP, and TIFF images are supported.",
+        error:
+          "Invalid file types. Only JPEG, PNG, WebP, and TIFF images are supported.",
         success: false,
       });
     }
@@ -55,7 +72,7 @@ export const handleImageToWord: RequestHandler = async (req, res) => {
               after: 200,
             },
             bold: true,
-          })
+          }),
         );
 
         // Perform OCR using Tesseract
@@ -68,8 +85,8 @@ export const handleImageToWord: RequestHandler = async (req, res) => {
 
         if (text.trim()) {
           // Add extracted text to document
-          const textLines = text.split("\n").filter(line => line.trim());
-          textLines.forEach(line => {
+          const textLines = text.split("\n").filter((line) => line.trim());
+          textLines.forEach((line) => {
             documentParagraphs.push(
               new Paragraph({
                 text: line,
@@ -77,7 +94,7 @@ export const handleImageToWord: RequestHandler = async (req, res) => {
                   line: 240,
                   after: 0,
                 },
-              })
+              }),
             );
           });
         } else {
@@ -88,7 +105,7 @@ export const handleImageToWord: RequestHandler = async (req, res) => {
                 after: 200,
               },
               italics: true,
-            })
+            }),
           );
         }
 
@@ -99,7 +116,7 @@ export const handleImageToWord: RequestHandler = async (req, res) => {
             spacing: {
               after: 400,
             },
-          })
+          }),
         );
       } catch (error) {
         console.error(`Error processing image ${file.originalname}:`, error);
@@ -110,7 +127,7 @@ export const handleImageToWord: RequestHandler = async (req, res) => {
               after: 200,
             },
             italics: true,
-          })
+          }),
         );
       }
     }
@@ -131,11 +148,11 @@ export const handleImageToWord: RequestHandler = async (req, res) => {
     // Set response headers for Word document download
     res.setHeader(
       "Content-Type",
-      "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
     );
     res.setHeader(
       "Content-Disposition",
-      `attachment; filename="converted-${Date.now()}.docx"`
+      `attachment; filename="converted-${Date.now()}.docx"`,
     );
     res.setHeader("Content-Length", buffer.length);
 

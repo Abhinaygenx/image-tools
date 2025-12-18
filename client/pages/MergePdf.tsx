@@ -1,6 +1,14 @@
 import { useState, useRef } from "react";
 import { Link } from "react-router-dom";
-import { FileText, ArrowLeft, Upload, X, Download, Loader, GripVertical } from "lucide-react";
+import {
+  FileText,
+  ArrowLeft,
+  Upload,
+  X,
+  Download,
+  Loader,
+  GripVertical,
+} from "lucide-react";
 
 interface PdfFile {
   id: string;
@@ -55,7 +63,7 @@ export default function MergePdf() {
   };
 
   const removePdf = (id: string) => {
-    setPdfs(pdfs.filter(pdf => pdf.id !== id));
+    setPdfs(pdfs.filter((pdf) => pdf.id !== id));
   };
 
   const handleDragStart = (id: string) => {
@@ -65,8 +73,8 @@ export default function MergePdf() {
   const handleDragEnter = (id: string) => {
     if (!draggedItem || draggedItem === id) return;
 
-    const draggedIndex = pdfs.findIndex(p => p.id === draggedItem);
-    const targetIndex = pdfs.findIndex(p => p.id === id);
+    const draggedIndex = pdfs.findIndex((p) => p.id === draggedItem);
+    const targetIndex = pdfs.findIndex((p) => p.id === id);
 
     const newPdfs = [...pdfs];
     const [draggedPdf] = newPdfs.splice(draggedIndex, 1);
@@ -91,7 +99,7 @@ export default function MergePdf() {
 
     try {
       const formData = new FormData();
-      pdfs.forEach(pdf => {
+      pdfs.forEach((pdf) => {
         formData.append("pdfs", pdf.file);
       });
 
@@ -228,7 +236,8 @@ export default function MergePdf() {
           {pdfs.length > 0 && (
             <div className="mb-8">
               <h3 className="mb-4 text-lg font-semibold text-foreground">
-                {pdfs.length} PDF{pdfs.length !== 1 ? "s" : ""} selected (Drag to reorder)
+                {pdfs.length} PDF{pdfs.length !== 1 ? "s" : ""} selected (Drag
+                to reorder)
               </h3>
               <div className="space-y-2">
                 {pdfs.map((pdf, index) => (
@@ -244,7 +253,9 @@ export default function MergePdf() {
                   >
                     <GripVertical className="h-5 w-5 text-foreground/50 flex-shrink-0" />
                     <div className="flex-1 min-w-0">
-                      <p className="font-medium text-foreground truncate">{pdf.file.name}</p>
+                      <p className="font-medium text-foreground truncate">
+                        {pdf.file.name}
+                      </p>
                       <p className="text-sm text-foreground/70">
                         {(pdf.file.size / 1024 / 1024).toFixed(2)} MB
                       </p>
@@ -267,10 +278,7 @@ export default function MergePdf() {
           {/* Action Buttons */}
           <div className="flex flex-col gap-3 sm:flex-row">
             {pdfs.length > 0 && (
-              <button
-                onClick={() => setPdfs([])}
-                className="btn-ghost flex-1"
-              >
+              <button onClick={() => setPdfs([])} className="btn-ghost flex-1">
                 Clear All
               </button>
             )}
@@ -295,19 +303,28 @@ export default function MergePdf() {
 
           {/* Info Section */}
           <div className="mt-12 rounded-xl border border-border bg-card p-6">
-            <h3 className="text-lg font-semibold text-foreground mb-4">How it works</h3>
+            <h3 className="text-lg font-semibold text-foreground mb-4">
+              How it works
+            </h3>
             <ul className="space-y-3 text-foreground/70">
               <li className="flex gap-3">
                 <span className="font-semibold text-primary">1.</span>
-                <span>Upload multiple PDF files using the drag-and-drop area or file selector</span>
+                <span>
+                  Upload multiple PDF files using the drag-and-drop area or file
+                  selector
+                </span>
               </li>
               <li className="flex gap-3">
                 <span className="font-semibold text-primary">2.</span>
-                <span>Reorder the PDFs by dragging them to your desired sequence</span>
+                <span>
+                  Reorder the PDFs by dragging them to your desired sequence
+                </span>
               </li>
               <li className="flex gap-3">
                 <span className="font-semibold text-primary">3.</span>
-                <span>Click "Merge PDFs" to combine all files into a single document</span>
+                <span>
+                  Click "Merge PDFs" to combine all files into a single document
+                </span>
               </li>
               <li className="flex gap-3">
                 <span className="font-semibold text-primary">4.</span>
@@ -316,7 +333,8 @@ export default function MergePdf() {
             </ul>
             <div className="mt-6 pt-6 border-t border-border">
               <p className="text-sm text-foreground/70">
-                <strong>Note:</strong> PDFs are merged in the order they appear in your list. You can drag and drop to reorder before merging.
+                <strong>Note:</strong> PDFs are merged in the order they appear
+                in your list. You can drag and drop to reorder before merging.
               </p>
             </div>
           </div>

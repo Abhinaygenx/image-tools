@@ -42,12 +42,36 @@ export function createServer() {
   app.get("/api/demo", handleDemo);
 
   // Document conversion endpoints
-  app.post("/api/convert/images-to-pdf", uploadMultiple.array("images", 50), handleImagesToPdf);
-  app.post("/api/convert/pdf-to-word", uploadSingle.single("pdf"), handlePdfToWord);
-  app.post("/api/convert/image-to-word", uploadMultiple.array("images", 50), handleImageToWord);
-  app.post("/api/convert/merge-pdf", uploadMultiple.array("pdfs", 50), handleMergePdf);
-  app.post("/api/convert/compress-pdf", uploadSingle.single("pdf"), handleCompressPdf);
-  app.post("/api/convert/protect-pdf", uploadSingle.single("pdf"), handleProtectPdf);
+  app.post(
+    "/api/convert/images-to-pdf",
+    uploadMultiple.array("images", 50),
+    handleImagesToPdf,
+  );
+  app.post(
+    "/api/convert/pdf-to-word",
+    uploadSingle.single("pdf"),
+    handlePdfToWord,
+  );
+  app.post(
+    "/api/convert/image-to-word",
+    uploadMultiple.array("images", 50),
+    handleImageToWord,
+  );
+  app.post(
+    "/api/convert/merge-pdf",
+    uploadMultiple.array("pdfs", 50),
+    handleMergePdf,
+  );
+  app.post(
+    "/api/convert/compress-pdf",
+    uploadSingle.single("pdf"),
+    handleCompressPdf,
+  );
+  app.post(
+    "/api/convert/protect-pdf",
+    uploadSingle.single("pdf"),
+    handleProtectPdf,
+  );
 
   return app;
 }

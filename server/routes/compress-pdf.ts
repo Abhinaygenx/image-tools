@@ -29,7 +29,8 @@ export const handleCompressPdf: RequestHandler = async (req, res) => {
       } catch (parseError) {
         console.error("Error loading PDF:", parseError);
         return res.status(400).json({
-          error: "The PDF file could not be read. It may be corrupted, encrypted, or in an unsupported format. Try re-saving the file in your PDF reader.",
+          error:
+            "The PDF file could not be read. It may be corrupted, encrypted, or in an unsupported format. Try re-saving the file in your PDF reader.",
           success: false,
         });
       }
@@ -45,13 +46,16 @@ export const handleCompressPdf: RequestHandler = async (req, res) => {
       const compressedSize = compressedBytes.length;
 
       // Calculate compression ratio
-      const compressionRatio = ((1 - compressedSize / originalSize) * 100).toFixed(1);
+      const compressionRatio = (
+        (1 - compressedSize / originalSize) *
+        100
+      ).toFixed(1);
 
       // Set response headers
       res.setHeader("Content-Type", "application/pdf");
       res.setHeader(
         "Content-Disposition",
-        `attachment; filename="compressed-${Date.now()}.pdf"`
+        `attachment; filename="compressed-${Date.now()}.pdf"`,
       );
       res.setHeader("Content-Length", compressedSize);
       res.setHeader("X-Original-Size", originalSize.toString());

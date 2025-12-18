@@ -42,7 +42,10 @@ export default function ImageToWord() {
           preview: e.target?.result as string,
         });
 
-        if (newImages.length === Array.from(files).filter(f => validTypes.includes(f.type)).length) {
+        if (
+          newImages.length ===
+          Array.from(files).filter((f) => validTypes.includes(f.type)).length
+        ) {
           setImages([...images, ...newImages]);
           setError(null);
         }
@@ -63,7 +66,7 @@ export default function ImageToWord() {
   };
 
   const removeImage = (id: string) => {
-    setImages(images.filter(img => img.id !== id));
+    setImages(images.filter((img) => img.id !== id));
   };
 
   const handleConvert = async () => {
@@ -78,7 +81,7 @@ export default function ImageToWord() {
 
     try {
       const formData = new FormData();
-      images.forEach(img => {
+      images.forEach((img) => {
         formData.append("images", img.file);
       });
 
@@ -206,7 +209,9 @@ export default function ImageToWord() {
           {success && (
             <div className="mb-6 flex items-center gap-3 rounded-lg border border-green-500/30 bg-green-500/10 p-4 text-green-700">
               <div className="flex-1">
-                <p className="font-medium">✓ Word document created successfully!</p>
+                <p className="font-medium">
+                  ✓ Word document created successfully!
+                </p>
               </div>
             </div>
           )}
@@ -276,11 +281,16 @@ export default function ImageToWord() {
 
           {/* Info Section */}
           <div className="mt-12 rounded-xl border border-border bg-card p-6">
-            <h3 className="text-lg font-semibold text-foreground mb-4">How it works</h3>
+            <h3 className="text-lg font-semibold text-foreground mb-4">
+              How it works
+            </h3>
             <ul className="space-y-3 text-foreground/70">
               <li className="flex gap-3">
                 <span className="font-semibold text-primary">1.</span>
-                <span>Upload multiple image files using the drag-and-drop area or file selector</span>
+                <span>
+                  Upload multiple image files using the drag-and-drop area or
+                  file selector
+                </span>
               </li>
               <li className="flex gap-3">
                 <span className="font-semibold text-primary">2.</span>
@@ -288,7 +298,9 @@ export default function ImageToWord() {
               </li>
               <li className="flex gap-3">
                 <span className="font-semibold text-primary">3.</span>
-                <span>Click "Convert to Word" to create an editable document</span>
+                <span>
+                  Click "Convert to Word" to create an editable document
+                </span>
               </li>
               <li className="flex gap-3">
                 <span className="font-semibold text-primary">4.</span>
@@ -297,7 +309,10 @@ export default function ImageToWord() {
             </ul>
             <div className="mt-6 pt-6 border-t border-border">
               <p className="text-sm text-foreground/70">
-                <strong>Note:</strong> This tool uses OCR (Optical Character Recognition) to extract text from images. The accuracy depends on image quality and text clarity. Best results with clear, well-lit images.
+                <strong>Note:</strong> This tool uses OCR (Optical Character
+                Recognition) to extract text from images. The accuracy depends
+                on image quality and text clarity. Best results with clear,
+                well-lit images.
               </p>
             </div>
           </div>

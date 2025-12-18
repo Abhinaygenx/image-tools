@@ -14,7 +14,11 @@ export const handleProtectPdf: RequestHandler = async (req, res) => {
       });
     }
 
-    if (!password || typeof password !== "string" || password.trim().length === 0) {
+    if (
+      !password ||
+      typeof password !== "string" ||
+      password.trim().length === 0
+    ) {
       return res.status(400).json({
         error: "Password is required",
         success: false,
@@ -44,7 +48,8 @@ export const handleProtectPdf: RequestHandler = async (req, res) => {
       } catch (parseError) {
         console.error("Error loading PDF:", parseError);
         return res.status(400).json({
-          error: "The PDF file could not be read. It may be corrupted, encrypted, or in an unsupported format. Try re-saving the file in your PDF reader.",
+          error:
+            "The PDF file could not be read. It may be corrupted, encrypted, or in an unsupported format. Try re-saving the file in your PDF reader.",
           success: false,
         });
       }
@@ -108,7 +113,8 @@ export const handleProtectPdf: RequestHandler = async (req, res) => {
         } catch (rebuildError) {
           console.error("Error rebuilding PDF for encryption:", rebuildError);
           return res.status(400).json({
-            error: "This PDF file has special formatting that prevents password protection. Try opening it in Adobe Reader and re-saving it, then try again.",
+            error:
+              "This PDF file has special formatting that prevents password protection. Try opening it in Adobe Reader and re-saving it, then try again.",
             success: false,
           });
         }
@@ -121,7 +127,7 @@ export const handleProtectPdf: RequestHandler = async (req, res) => {
       res.setHeader("Content-Type", "application/pdf");
       res.setHeader(
         "Content-Disposition",
-        `attachment; filename="protected-${Date.now()}.pdf"`
+        `attachment; filename="protected-${Date.now()}.pdf"`,
       );
       res.setHeader("Content-Length", protectedBytes.length);
 
