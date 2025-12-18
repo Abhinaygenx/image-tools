@@ -37,41 +37,10 @@ export const handleCompressPdf: RequestHandler = async (req, res) => {
       // Get the original file size
       const originalSize = file.size;
 
-      // Compress by copying pages with proper dimensions
-      const compressedPdf = await PDFDocument.create();
+      // Copy the entire PDF (this preserves page content better than individual page embedding)
+      const compressedPdf = await PDFDocument.copy(pdf);
 
-      // Copy pages with proper sizing
-      const pages = pdf.getPages();
-
-      if (pages.length === 0) {
-        return res.status(400).json({
-          error: "The PDF file appears to be empty.",
-          success: false,
-        });
-      }
-
-      for (const page of pages) {
-        try {
-          // Get the page dimensions
-          const { width, height } = page.getSize();
-
-          // Copy the page to the new document while preserving size
-          const copiedPage = await compressedPdf.embedPage(page);
-          compressedPdf.addPage([width, height], copiedPage);
-        } catch (pageError) {
-          console.error("Error processing page:", pageError);
-          try {
-            // Fallback: try basic embedding if the above fails
-            const copiedPage = await compressedPdf.embedPage(page);
-            compressedPdf.addPage(copiedPage);
-          } catch (fallbackError) {
-            console.error("Fallback page processing also failed:", fallbackError);
-            // Continue with other pages even if one fails
-          }
-        }
-      }
-
-      // Save with compression
+      // Save with compression - pdf-lib will automatically optimize
       const compressedBytes = await compressedPdf.save();
       const compressedSize = compressedBytes.length;
 
