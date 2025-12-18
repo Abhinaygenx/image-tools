@@ -32,7 +32,7 @@ export const handleMergePdf: RequestHandler = async (req, res) => {
 
     try {
       // Create a new PDF document to merge into
-      const mergedPdf = await PDFDocument.create();
+      let mergedPdf = await PDFDocument.create();
 
       // Process each PDF file
       for (const file of files) {
@@ -57,14 +57,25 @@ export const handleMergePdf: RequestHandler = async (req, res) => {
             continue;
           }
 
-          // Copy each page to the merged document
-          for (const page of pages) {
-            try {
-              const copiedPage = await mergedPdf.embedPage(page);
-              mergedPdf.addPage(copiedPage);
-            } catch (pageError) {
-              console.error(`Error processing page in ${file.originalname}:`, pageError);
-              // Skip problematic pages but continue with others
+          // Copy pages from this PDF to the merged document
+          try {
+            // Use copyPages for better content preservation
+            const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
+            copiedPages.forEach(page => {
+              mergedPdf.addPage(page);
+            });
+          } catch (copyError) {
+            console.error(`Error copying pages from ${file.originalname}:`, copyError);
+            // Fallback: try page-by-page embedding
+            for (const page of pages) {
+              try {
+                const { width, height } = page.getSize();
+                const copiedPage = await mergedPdf.embedPage(page);
+                mergedPdf.addPage([width, height], copiedPage);
+              } catch (pageError) {
+                console.error(`Error processing page in ${file.originalname}:`, pageError);
+                // Skip problematic pages but continue with others
+              }
             }
           }
         } catch (error) {
