@@ -38,7 +38,7 @@ export default function Tools() {
       color: "from-pink-500 to-pink-600",
       lightColor: "from-pink-50 to-pink-100",
       route: "/tools/image-to-word",
-      available: false,
+      available: true,
     },
     {
       id: 4,
