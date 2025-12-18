@@ -22,8 +22,17 @@ export const handleCompressPdf: RequestHandler = async (req, res) => {
     }
 
     try {
-      // Load the PDF
-      const pdf = await PDFDocument.load(file.buffer);
+      // Load the PDF with error handling
+      let pdf;
+      try {
+        pdf = await PDFDocument.load(file.buffer);
+      } catch (parseError) {
+        console.error("Error loading PDF:", parseError);
+        return res.status(400).json({
+          error: "The PDF file could not be read. It may be corrupted, encrypted, or in an unsupported format. Try re-saving the file in your PDF reader.",
+          success: false,
+        });
+      }
 
       // Get the original file size
       const originalSize = file.size;
@@ -33,9 +42,22 @@ export const handleCompressPdf: RequestHandler = async (req, res) => {
 
       // Copy pages with compression settings
       const pages = pdf.getPages();
+
+      if (pages.length === 0) {
+        return res.status(400).json({
+          error: "The PDF file appears to be empty.",
+          success: false,
+        });
+      }
+
       for (const page of pages) {
-        const copiedPage = await compressedPdf.embedPage(page);
-        compressedPdf.addPage(copiedPage);
+        try {
+          const copiedPage = await compressedPdf.embedPage(page);
+          compressedPdf.addPage(copiedPage);
+        } catch (pageError) {
+          console.error("Error processing page:", pageError);
+          // Continue with other pages even if one fails
+        }
       }
 
       // Save with compression
