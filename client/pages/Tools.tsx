@@ -58,7 +58,7 @@ export default function Tools() {
       color: "from-orange-500 to-orange-600",
       lightColor: "from-orange-50 to-orange-100",
       route: "/tools/compress-pdf",
-      available: false,
+      available: true,
     },
     {
       id: 6,
@@ -68,7 +68,7 @@ export default function Tools() {
       color: "from-red-500 to-red-600",
       lightColor: "from-red-50 to-red-100",
       route: "/tools/protect-pdf",
-      available: false,
+      available: true,
     },
   ];
 
