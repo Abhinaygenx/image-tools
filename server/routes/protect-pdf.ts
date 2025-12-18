@@ -37,24 +37,50 @@ export const handleProtectPdf: RequestHandler = async (req, res) => {
     }
 
     try {
-      // Load the PDF
-      const pdf = await PDFDocument.load(file.buffer);
+      // Load the PDF with error handling
+      let pdf;
+      try {
+        pdf = await PDFDocument.load(file.buffer);
+      } catch (parseError) {
+        console.error("Error loading PDF:", parseError);
+        return res.status(400).json({
+          error: "The PDF file could not be read. It may be corrupted, encrypted, or in an unsupported format. Try re-saving the file in your PDF reader.",
+          success: false,
+        });
+      }
+
+      // Check if PDF has pages
+      const pages = pdf.getPages();
+      if (pages.length === 0) {
+        return res.status(400).json({
+          error: "The PDF file appears to be empty.",
+          success: false,
+        });
+      }
 
       // Encrypt the PDF with the provided password
       // This will require the password to open the document
-      await pdf.encrypt({
-        userPassword: password,
-        ownerPassword: password,
-        permissions: {
-          printing: "fullQuality",
-          modifyContents: false,
-          copying: false,
-          modifyAnnotations: false,
-          fillingForms: false,
-          contentAccessibility: true,
-          documentAssembly: false,
-        },
-      });
+      try {
+        await pdf.encrypt({
+          userPassword: password,
+          ownerPassword: password,
+          permissions: {
+            printing: "fullQuality",
+            modifyContents: false,
+            copying: false,
+            modifyAnnotations: false,
+            fillingForms: false,
+            contentAccessibility: true,
+            documentAssembly: false,
+          },
+        });
+      } catch (encryptError) {
+        console.error("Error encrypting PDF:", encryptError);
+        return res.status(400).json({
+          error: "Failed to encrypt PDF. The file may be too large or have unsupported features.",
+          success: false,
+        });
+      }
 
       // Save the protected PDF
       const protectedBytes = await pdf.save();
