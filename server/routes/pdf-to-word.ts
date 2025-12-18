@@ -28,10 +28,21 @@ export const handlePdfToWord: RequestHandler = async (req, res) => {
       pdfData = await pdfParse(file.buffer);
     } catch (error) {
       console.error("Error parsing PDF:", error);
-      return res.status(400).json({
-        error: "Could not parse PDF file. Please ensure it's a valid PDF document.",
-        success: false,
-      });
+      // Try with a different approach if the first one fails
+      try {
+        // Sometimes PDFs need special handling
+        const pdf = await pdfParse(file.buffer, {
+          password: "",
+          max: 0, // No max pages
+        });
+        pdfData = pdf;
+      } catch (retryError) {
+        console.error("Error parsing PDF (retry):", retryError);
+        return res.status(400).json({
+          error: "Could not parse PDF file. It may be corrupted, encrypted, or in an unsupported format.",
+          success: false,
+        });
+      }
     }
 
     // Extract text from PDF
@@ -39,7 +50,7 @@ export const handlePdfToWord: RequestHandler = async (req, res) => {
 
     if (!text.trim()) {
       return res.status(400).json({
-        error: "No text content found in PDF. The PDF might be image-based or encrypted.",
+        error: "No text content found in PDF. The PDF might be image-based, scanned, or have protection that prevents text extraction.",
         success: false,
       });
     }
