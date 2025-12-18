@@ -37,10 +37,10 @@ export const handleCompressPdf: RequestHandler = async (req, res) => {
       // Get the original file size
       const originalSize = file.size;
 
-      // Compress by getting all pages and removing unnecessary metadata
+      // Compress by copying pages with proper dimensions
       const compressedPdf = await PDFDocument.create();
 
-      // Copy pages with compression settings
+      // Copy pages with proper sizing
       const pages = pdf.getPages();
 
       if (pages.length === 0) {
@@ -52,11 +52,22 @@ export const handleCompressPdf: RequestHandler = async (req, res) => {
 
       for (const page of pages) {
         try {
+          // Get the page dimensions
+          const { width, height } = page.getSize();
+
+          // Copy the page to the new document while preserving size
           const copiedPage = await compressedPdf.embedPage(page);
-          compressedPdf.addPage(copiedPage);
+          compressedPdf.addPage([width, height], copiedPage);
         } catch (pageError) {
           console.error("Error processing page:", pageError);
-          // Continue with other pages even if one fails
+          try {
+            // Fallback: try basic embedding if the above fails
+            const copiedPage = await compressedPdf.embedPage(page);
+            compressedPdf.addPage(copiedPage);
+          } catch (fallbackError) {
+            console.error("Fallback page processing also failed:", fallbackError);
+            // Continue with other pages even if one fails
+          }
         }
       }
 
