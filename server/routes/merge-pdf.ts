@@ -37,17 +37,35 @@ export const handleMergePdf: RequestHandler = async (req, res) => {
       // Process each PDF file
       for (const file of files) {
         try {
-          // Load the PDF
-          const pdf = await PDFDocument.load(file.buffer);
+          // Load the PDF with error handling
+          let pdf;
+          try {
+            pdf = await PDFDocument.load(file.buffer);
+          } catch (loadError) {
+            console.error(`Error loading PDF ${file.originalname}:`, loadError);
+            return res.status(400).json({
+              error: `Could not read PDF file: ${file.originalname}. It may be corrupted, encrypted, or in an unsupported format.`,
+              success: false,
+            });
+          }
 
           // Get all pages from this PDF
-          const pageCount = pdf.getPageCount();
           const pages = pdf.getPages();
+
+          if (pages.length === 0) {
+            console.warn(`PDF ${file.originalname} has no pages, skipping`);
+            continue;
+          }
 
           // Copy each page to the merged document
           for (const page of pages) {
-            const copiedPage = await mergedPdf.embedPage(page);
-            mergedPdf.addPage(copiedPage);
+            try {
+              const copiedPage = await mergedPdf.embedPage(page);
+              mergedPdf.addPage(copiedPage);
+            } catch (pageError) {
+              console.error(`Error processing page in ${file.originalname}:`, pageError);
+              // Skip problematic pages but continue with others
+            }
           }
         } catch (error) {
           console.error(`Error processing PDF ${file.originalname}:`, error);
@@ -56,6 +74,14 @@ export const handleMergePdf: RequestHandler = async (req, res) => {
             success: false,
           });
         }
+      }
+
+      // Check if we have any pages in the merged PDF
+      if (mergedPdf.getPageCount() === 0) {
+        return res.status(400).json({
+          error: "No pages could be extracted from the provided PDFs. Please check your files.",
+          success: false,
+        });
       }
 
       // Save the merged PDF
