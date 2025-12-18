@@ -44,13 +44,10 @@ export const handlePdfToWord: RequestHandler = async (req, res) => {
       });
     }
 
-    // Split text into paragraphs and create Word document
-    const paragraphTexts = text
-      .split(/\n\n+/)
-      .map(para => para.trim())
-      .filter(para => para.length > 0);
+    // Split text by single newlines to preserve formatting and spacing
+    const lines = text.split("\n");
 
-    // Create paragraphs for the document
+    // Create paragraphs, preserving the original spacing and structure
     const documentParagraphs = [
       new Paragraph({
         text: `Converted from: ${file.originalname}`,
@@ -65,13 +62,13 @@ export const handlePdfToWord: RequestHandler = async (req, res) => {
           after: 200,
         },
       }),
-      ...paragraphTexts.map(
-        text =>
+      ...lines.map(
+        line =>
           new Paragraph({
-            text,
+            text: line || "", // Preserve empty lines for spacing
             spacing: {
               line: 240,
-              after: 200,
+              after: 0,
             },
           })
       ),
