@@ -5,6 +5,7 @@ import multer from "multer";
 import { handleDemo } from "./routes/demo";
 import { handleImagesToPdf } from "./routes/images-to-pdf";
 import { handlePdfToWord } from "./routes/pdf-to-word";
+import { handleImageToWord } from "./routes/image-to-word";
 
 // Configure multer for file uploads
 const uploadMultiple = multer({
@@ -38,16 +39,9 @@ export function createServer() {
   app.get("/api/demo", handleDemo);
 
   // Document conversion endpoints
-  app.post(
-    "/api/convert/images-to-pdf",
-    uploadMultiple.array("images", 50),
-    handleImagesToPdf,
-  );
-  app.post(
-    "/api/convert/pdf-to-word",
-    uploadSingle.single("pdf"),
-    handlePdfToWord,
-  );
+  app.post("/api/convert/images-to-pdf", uploadMultiple.array("images", 50), handleImagesToPdf);
+  app.post("/api/convert/pdf-to-word", uploadSingle.single("pdf"), handlePdfToWord);
+  app.post("/api/convert/image-to-word", uploadMultiple.array("images", 50), handleImageToWord);
 
   return app;
 }
