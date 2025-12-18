@@ -6,6 +6,7 @@ import { handleDemo } from "./routes/demo";
 import { handleImagesToPdf } from "./routes/images-to-pdf";
 import { handlePdfToWord } from "./routes/pdf-to-word";
 import { handleImageToWord } from "./routes/image-to-word";
+import { handleMergePdf } from "./routes/merge-pdf";
 
 // Configure multer for file uploads
 const uploadMultiple = multer({
