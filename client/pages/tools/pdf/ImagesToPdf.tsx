@@ -1,11 +1,87 @@
 import { useState, useRef } from "react";
 import { Link } from "react-router-dom";
-import { FileText, ArrowLeft, Upload, X, Download, Loader } from "lucide-react";
+import { FileText, ArrowLeft, Upload, X, Download, Loader, GripVertical } from "lucide-react";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  rectSortingStrategy,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 interface ImageFile {
   id: string;
   file: File;
   preview: string;
+}
+
+function SortableImage({ image, onRemove }: { image: ImageFile; onRemove: (id: string) => void }) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+  } = useSortable({ id: image.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className="group relative overflow-hidden rounded-lg border border-border bg-muted aspect-square select-none"
+    >
+      {/* Drag Handle Overlay */}
+      <div
+        {...attributes}
+        {...listeners}
+        className="absolute inset-0 z-10 cursor-grab active:cursor-grabbing hover:bg-black/10 transition-colors"
+      />
+
+      <img
+        src={image.preview}
+        alt={image.file.name}
+        className="h-full w-full object-cover"
+      />
+
+      {/* Controls (Above drag layer) */}
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          onRemove(image.id);
+        }}
+        className="absolute right-2 top-2 z-20 flex h-7 w-7 items-center justify-center rounded-full bg-destructive text-white opacity-0 transition-opacity duration-200 group-hover:opacity-100 hover:bg-destructive/90 cursor-pointer"
+      >
+        <X className="h-4 w-4" />
+      </button>
+
+      <div className="absolute inset-x-0 bottom-0 z-0 bg-gradient-to-t from-black/60 to-transparent p-2 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+        <p className="text-center text-xs font-medium text-white truncate px-1">
+          {image.file.name}
+        </p>
+      </div>
+
+      <div className="absolute left-2 top-2 z-0 opacity-0 group-hover:opacity-100 transition-opacity">
+        <div className="bg-black/40 rounded p-1">
+          <GripVertical className="h-4 w-4 text-white" />
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default function ImagesToPdf() {
@@ -14,6 +90,13 @@ export default function ImagesToPdf() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
 
   const handleFileSelect = (files: FileList | null) => {
     if (!files) return;
@@ -43,7 +126,7 @@ export default function ImagesToPdf() {
         });
 
         if (newImages.length === Array.from(files).filter(f => validTypes.includes(f.type)).length) {
-          setImages([...images, ...newImages]);
+          setImages(prev => [...prev, ...newImages]);
           setError(null);
         }
       };
@@ -62,6 +145,19 @@ export default function ImagesToPdf() {
     handleFileSelect(e.dataTransfer.files);
   };
 
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (over && active.id !== over.id) {
+      setImages((items) => {
+        const oldIndex = items.findIndex((item) => item.id === active.id);
+        const newIndex = items.findIndex((item) => item.id === over.id);
+
+        return arrayMove(items, oldIndex, newIndex);
+      });
+    }
+  };
+
   const removeImage = (id: string) => {
     setImages(images.filter(img => img.id !== id));
   };
@@ -77,23 +173,43 @@ export default function ImagesToPdf() {
     setSuccess(false);
 
     try {
-      const formData = new FormData();
-      images.forEach(img => {
-        formData.append("images", img.file);
-      });
+      const { PDFDocument } = await import("pdf-lib");
+      const pdfDoc = await PDFDocument.create();
 
-      const response = await fetch("/api/convert/images-to-pdf", {
-        method: "POST",
-        body: formData,
-      });
+      for (const img of images) {
+        const imageBytes = await img.file.arrayBuffer();
+        let imageEmbed;
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Conversion failed");
+        if (img.file.type === "image/jpeg" || img.file.type === "image/jpg") {
+          imageEmbed = await pdfDoc.embedJpg(imageBytes);
+        } else if (img.file.type === "image/png") {
+          imageEmbed = await pdfDoc.embedPng(imageBytes);
+        } else {
+          console.warn("Skipping unsupported image type for direct embed:", img.file.type);
+          continue;
+        }
+
+        if (imageEmbed) {
+          // Scale image to fit A4 optionally, or just use image size. 
+          // Let's use image size for full quality.
+          const page = pdfDoc.addPage([imageEmbed.width, imageEmbed.height]);
+          page.drawImage(imageEmbed, {
+            x: 0,
+            y: 0,
+            width: imageEmbed.width,
+            height: imageEmbed.height,
+          });
+        }
       }
 
+      if (pdfDoc.getPageCount() === 0) {
+        throw new Error("No valid images (JPG/PNG) were processed.");
+      }
+
+      const pdfBytes = await pdfDoc.save();
+
       // Download the PDF
-      const blob = await response.blob();
+      const blob = new Blob([pdfBytes as any], { type: "application/pdf" });
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
@@ -109,6 +225,7 @@ export default function ImagesToPdf() {
         setSuccess(false);
       }, 3000);
     } catch (err) {
+      console.error(err);
       setError(err instanceof Error ? err.message : "Conversion failed");
     } finally {
       setIsConverting(false);
@@ -125,7 +242,7 @@ export default function ImagesToPdf() {
               <FileText className="h-6 w-6 text-primary-foreground" />
             </div>
             <span className="hidden text-xl font-bold text-foreground sm:inline">
-              PDF Pro
+              StudentHub
             </span>
           </Link>
           <Link to="/tools" className="btn-ghost flex items-center gap-2">
@@ -208,34 +325,27 @@ export default function ImagesToPdf() {
           {/* Image List */}
           {images.length > 0 && (
             <div className="mb-8">
-              <h3 className="mb-4 text-lg font-semibold text-foreground">
-                {images.length} image{images.length !== 1 ? "s" : ""} selected
+              <h3 className="mb-4 text-lg font-semibold text-foreground flex justify-between items-center">
+                <span>{images.length} image{images.length !== 1 ? "s" : ""} selected</span>
+                <span className="text-xs font-normal text-muted-foreground bg-muted px-2 py-1 rounded">Drag to reorder</span>
               </h3>
-              <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
-                {images.map((image) => (
-                  <div
-                    key={image.id}
-                    className="group relative overflow-hidden rounded-lg border border-border bg-muted"
-                  >
-                    <img
-                      src={image.preview}
-                      alt={image.file.name}
-                      className="h-24 w-full object-cover"
-                    />
-                    <button
-                      onClick={() => removeImage(image.id)}
-                      className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full bg-destructive text-white opacity-0 transition-opacity duration-200 group-hover:opacity-100"
-                    >
-                      <X className="h-4 w-4" />
-                    </button>
-                    <div className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
-                      <p className="text-center text-xs font-medium text-white px-2">
-                        {image.file.name}
-                      </p>
-                    </div>
+
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleDragEnd}
+              >
+                <SortableContext
+                  items={images.map(img => img.id)}
+                  strategy={rectSortingStrategy}
+                >
+                  <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
+                    {images.map((image) => (
+                      <SortableImage key={image.id} image={image} onRemove={removeImage} />
+                    ))}
                   </div>
-                ))}
-              </div>
+                </SortableContext>
+              </DndContext>
             </div>
           )}
 
@@ -278,7 +388,7 @@ export default function ImagesToPdf() {
               </li>
               <li className="flex gap-3">
                 <span className="font-semibold text-primary">2.</span>
-                <span>Remove unwanted images or rearrange them as needed</span>
+                <span>Remove unwanted images or rearrange them by dragging as needed</span>
               </li>
               <li className="flex gap-3">
                 <span className="font-semibold text-primary">3.</span>

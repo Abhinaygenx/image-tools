@@ -1,369 +1,255 @@
 import { Link } from "react-router-dom";
 import {
+  School,
   FileText,
   Image,
   Zap,
   Shield,
   ChevronRight,
-  Download,
-  Lock,
-  Smartphone,
+  BrainCircuit,
+  Calculator,
+  Laptop,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useAuth } from "@/context/AuthContext";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { LogOut, User as UserIcon, CreditCard, Home } from "lucide-react";
 
 export default function Index() {
-  const tools = [
+  const { user, isLoading, logout } = useAuth();
+
+  const featuredTools = [
     {
-      icon: Image,
-      title: "Multiple Images to PDF",
-      description: "Convert multiple image files to a single PDF document",
-      href: "/tools/images-to-pdf",
+      icon: Calculator,
+      title: "GPA Calculator",
+      description: "Calculate your semester and cumulative GPA instantly",
+      href: "/tools/academic/gpa-calculator",
+      color: "text-emerald-500",
+      bg: "bg-emerald-500/10",
     },
     {
       icon: FileText,
       title: "PDF to Word",
-      description: "Extract text from PDF and convert to editable Word format",
-      href: "/tools/pdf-to-word",
+      description: "Convert PDF documents to editable Word format",
+      href: "/tools/pdf/pdf-to-word",
+      color: "text-blue-500",
+      bg: "bg-blue-500/10",
     },
     {
-      icon: Image,
-      title: "Image to Word",
-      description: "Convert image files directly to editable Word documents",
-      href: "/tools/image-to-word",
-    },
-    {
-      icon: FileText,
-      title: "PDF Merger",
-      description: "Merge multiple PDF files into a single document",
-      href: "/tools/merge-pdf",
-    },
-    {
-      icon: Download,
-      title: "PDF Compressor",
-      description: "Reduce PDF file size while maintaining quality",
-      href: "/tools/compress-pdf",
-    },
-    {
-      icon: Lock,
-      title: "PDF Protector",
-      description: "Add password protection to your PDF documents",
-      href: "/tools/protect-pdf",
-    },
-  ];
-
-  const features = [
-    {
-      icon: Zap,
-      title: "Lightning Fast",
-      description:
-        "Process your documents in seconds with our optimized engine",
-    },
-    {
-      icon: Shield,
-      title: "Secure & Private",
-      description:
-        "Your files are encrypted and automatically deleted after processing",
-    },
-    {
-      icon: Smartphone,
-      title: "All Devices",
-      description: "Works seamlessly on desktop, tablet, and mobile devices",
+      icon: BrainCircuit,
+      title: "AI Summarizer",
+      description: "Summarize long articles and notes instantly with AI",
+      href: "/tools/ai/summarizer",
+      color: "text-violet-500",
+      bg: "bg-violet-500/10",
     },
   ];
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background flex flex-col">
       {/* Header */}
-      <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur">
+      <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-md">
         <div className="container-custom flex items-center justify-between py-4">
-          <Link to="/" className="flex items-center gap-2">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-accent">
-              <FileText className="h-6 w-6 text-primary-foreground" />
+          <Link to="/" className="flex items-center gap-2 group">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-accent transition-transform group-hover:scale-105">
+              <School className="h-6 w-6 text-primary-foreground" />
             </div>
-            <span className="hidden text-xl font-bold text-foreground sm:inline">
-              PDF Pro
+            <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">
+              StudentHub
             </span>
           </Link>
-          <nav className="flex items-center gap-8">
-            <a
-              href="#tools"
-              className="hidden text-sm font-medium text-foreground/70 transition-colors hover:text-foreground md:inline"
-            >
-              Tools
-            </a>
-            <a
-              href="#features"
-              className="hidden text-sm font-medium text-foreground/70 transition-colors hover:text-foreground md:inline"
-            >
-              Features
-            </a>
-            <Link to="/tools" className="btn-primary">
-              Get Started
-            </Link>
+          <nav className="flex items-center gap-6">
+            <div className="hidden md:flex items-center gap-6">
+              <Link to="/tools" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
+                Tools
+              </Link>
+              <a href="#features" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
+                Features
+              </a>
+              <Link to="/pricing" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
+                Pricing
+              </Link>
+            </div>
+
+            {!isLoading && (
+              user ? (
+                <div className="flex items-center gap-4">
+                  <Link to="/tools">
+                    <Button variant="ghost">Dashboard</Button>
+                  </Link>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" className="relative h-10 w-10 rounded-full">
+                        <Avatar className="h-10 w-10 border border-border">
+                          <AvatarFallback className="bg-primary/10 text-primary font-bold">
+                            {user.email?.charAt(0).toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="w-56" align="end" forceMount>
+                      <DropdownMenuLabel className="font-normal">
+                        <div className="flex flex-col space-y-1">
+                          <p className="text-sm font-medium leading-none">{user.email?.split('@')[0]}</p>
+                          <p className="text-xs leading-none text-muted-foreground">
+                            {user.email}
+                          </p>
+                        </div>
+                      </DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem className="cursor-default">
+                        <CreditCard className="mr-2 h-4 w-4" />
+                        <span>{user.isPro ? "Pro Plan" : "Free Plan"}</span>
+                        {user.isPro && <span className="ml-auto text-xs bg-green-500/10 text-green-600 px-1.5 py-0.5 rounded font-bold">PRO</span>}
+                      </DropdownMenuItem>
+                      {user.role === 'admin' && (
+                        <>
+                          <DropdownMenuSeparator />
+                          <Link to="/admin">
+                            <DropdownMenuItem className="cursor-pointer">
+                              <Shield className="mr-2 h-4 w-4" />
+                              <span>Admin Panel</span>
+                            </DropdownMenuItem>
+                          </Link>
+                        </>
+                      )}
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem onClick={() => logout()} className="cursor-pointer text-red-600 focus:text-red-600">
+                        <LogOut className="mr-2 h-4 w-4" />
+                        <span>Log out</span>
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+              ) : (
+                <Link to="/login">
+                  <Button>Sign In</Button>
+                </Link>
+              )
+            )}
           </nav>
         </div>
       </header>
 
-      {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-primary-50 via-background to-background py-20 sm:py-32">
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute -top-40 right-0 h-80 w-80 rounded-full bg-gradient-to-br from-primary/10 to-accent/10 blur-3xl" />
-          <div className="absolute -bottom-40 left-0 h-80 w-80 rounded-full bg-gradient-to-tr from-accent/10 to-primary/10 blur-3xl" />
-        </div>
-
-        <div className="container-custom relative">
-          <div className="mx-auto max-w-2xl text-center">
-            <h1 className="animate-slide-up text-4xl font-bold sm:text-5xl lg:text-6xl">
-              Convert Documents,{" "}
-              <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                Instantly
-              </span>
-            </h1>
-            <p className="mt-6 text-lg text-foreground/70 sm:text-xl">
-              Transform your files effortlessly. Convert images to PDF, PDF to
-              Word, and more. No registration needed, 100% secure.
-            </p>
-            <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:justify-center">
-              <Link to="/tools" className="btn-primary">
-                Start Converting
-                <ChevronRight className="ml-2 h-5 w-5" />
-              </Link>
-              <a href="#tools" className="btn-secondary">
-                Explore Tools
-              </a>
-            </div>
+      <main className="flex-1">
+        {/* Hero Section */}
+        <section className="relative overflow-hidden py-20 sm:py-32">
+          {/* Background Blobs */}
+          <div className="absolute inset-0 overflow-hidden -z-10">
+            <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 w-[500px] h-[500px] rounded-full bg-primary/10 blur-[100px]" />
+            <div className="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/2 w-[500px] h-[500px] rounded-full bg-accent/10 blur-[100px]" />
           </div>
 
-          {/* Hero Stats */}
-          <div className="mt-16 grid grid-cols-1 gap-4 sm:grid-cols-3">
-            <div
-              className="animate-fade-in rounded-xl border border-border bg-card p-8"
-              style={{ animationDelay: "0ms" }}
-            >
-              <div className="text-4xl font-bold text-primary">100%</div>
-              <p className="mt-2 text-foreground/70">Secure & Private</p>
-              <p className="mt-1 text-sm text-foreground/50">
-                Your files are encrypted and auto-deleted
-              </p>
-            </div>
-            <div
-              className="animate-fade-in rounded-xl border border-border bg-card p-8"
-              style={{ animationDelay: "100ms" }}
-            >
-              <div className="text-4xl font-bold text-primary">&lt;5s</div>
-              <p className="mt-2 text-foreground/70">Lightning Fast</p>
-              <p className="mt-1 text-sm text-foreground/50">
-                Most conversions complete instantly
-              </p>
-            </div>
-            <div
-              className="animate-fade-in rounded-xl border border-border bg-card p-8"
-              style={{ animationDelay: "200ms" }}
-            >
-              <div className="text-4xl font-bold text-primary">6+</div>
-              <p className="mt-2 text-foreground/70">Tools Available</p>
-              <p className="mt-1 text-sm text-foreground/50">
-                All formats supported and more coming
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Tools Section */}
-      <section
-        id="tools"
-        className="border-t border-border bg-background py-20 sm:py-32"
-      >
-        <div className="container-custom">
-          <div className="mx-auto mb-16 max-w-2xl text-center">
-            <h2 className="text-3xl font-bold sm:text-4xl">
-              Powerful Tools for Every Need
-            </h2>
-            <p className="mt-4 text-foreground/70">
-              Choose from our comprehensive suite of document conversion tools
-            </p>
-          </div>
-
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {tools.map((tool, index) => {
-              const Icon = tool.icon;
-              return (
-                <Link key={index} to={tool.href} className="group card-base">
-                  <div className="mb-4 inline-flex rounded-lg bg-gradient-to-br from-primary/10 to-accent/10 p-3 transition-all duration-200 group-hover:from-primary/20 group-hover:to-accent/20">
-                    <Icon className="h-6 w-6 text-primary" />
-                  </div>
-                  <h3 className="text-lg font-semibold text-foreground">
-                    {tool.title}
-                  </h3>
-                  <p className="mt-2 text-sm text-foreground/70">
-                    {tool.description}
-                  </p>
-                  <div className="mt-4 flex items-center gap-2 text-sm font-medium text-primary transition-all duration-200 group-hover:gap-3">
-                    Get started
-                    <ChevronRight className="h-4 w-4" />
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* Features Section */}
-      <section
-        id="features"
-        className="border-t border-border bg-gradient-to-br from-primary-50 via-background to-background py-20 sm:py-32"
-      >
-        <div className="container-custom">
-          <div className="mx-auto mb-16 max-w-2xl text-center">
-            <h2 className="text-3xl font-bold sm:text-4xl">Why Choose Us</h2>
-            <p className="mt-4 text-foreground/70">
-              The fastest and most secure way to convert your documents
-            </p>
-          </div>
-
-          <div className="grid gap-8 sm:grid-cols-3">
-            {features.map((feature, index) => {
-              const Icon = feature.icon;
-              return (
-                <div key={index} className="card-base text-center">
-                  <div className="mx-auto mb-4 inline-flex rounded-full bg-gradient-to-br from-primary/10 to-accent/10 p-4">
-                    <Icon className="h-6 w-6 text-primary" />
-                  </div>
-                  <h3 className="text-lg font-semibold text-foreground">
-                    {feature.title}
-                  </h3>
-                  <p className="mt-2 text-foreground/70">
-                    {feature.description}
-                  </p>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="border-t border-border bg-background py-16 sm:py-24">
-        <div className="container-custom">
-          <div className="mx-auto max-w-2xl rounded-2xl bg-gradient-to-r from-primary to-accent p-12 text-center">
-            <h2 className="text-3xl font-bold text-primary-foreground sm:text-4xl">
-              Ready to Get Started?
-            </h2>
-            <p className="mt-4 text-primary-foreground/90">
-              Convert your first document today, no sign up required
-            </p>
-            <Link
-              to="/tools"
-              className="mt-8 inline-flex items-center gap-2 rounded-lg bg-primary-foreground px-8 py-3 font-semibold text-primary transition-all duration-200 hover:shadow-lg active:scale-95"
-            >
-              Start Converting Now
-              <ChevronRight className="h-5 w-5" />
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="border-t border-border bg-background py-12">
-        <div className="container-custom">
-          <div className="grid gap-8 sm:grid-cols-2 md:grid-cols-4">
-            <div>
-              <div className="flex items-center gap-2 mb-4">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-accent">
-                  <FileText className="h-5 w-5 text-primary-foreground" />
-                </div>
-                <span className="font-bold text-foreground">PDF Pro</span>
+          <div className="container-custom relative">
+            <div className="mx-auto max-w-3xl text-center">
+              <div className="inline-flex items-center rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-sm font-medium text-primary mb-6 animate-fade-in">
+                <span className="flex h-2 w-2 rounded-full bg-primary mr-2"></span>
+                The Ultimate Student Productivity Platform
               </div>
-              <p className="text-sm text-foreground/70">
-                Fast, secure document conversion
+
+              <h1 className="text-4xl font-extrabold sm:text-6xl tracking-tight mb-6 animate-slide-up">
+                Master Your Studies with{" "}
+                <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                  StudentHub
+                </span>
+              </h1>
+
+              <p className="text-lg text-muted-foreground mb-10 max-w-2xl mx-auto animate-slide-up" style={{ animationDelay: "100ms" }}>
+                One platform for all your academic needs. Free PDF tools, GPA calculators,
+                AI study aids, and more. Built to help you succeed.
               </p>
-            </div>
-            <div>
-              <h4 className="mb-4 font-semibold text-foreground">Tools</h4>
-              <ul className="space-y-2">
-                <li>
-                  <a
-                    href="#"
-                    className="text-sm text-foreground/70 hover:text-foreground transition-colors"
-                  >
-                    Images to PDF
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="text-sm text-foreground/70 hover:text-foreground transition-colors"
-                  >
-                    PDF to Word
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="text-sm text-foreground/70 hover:text-foreground transition-colors"
-                  >
+
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-slide-up" style={{ animationDelay: "200ms" }}>
+                <Link to="/tools">
+                  <Button size="lg" className="h-12 px-8 text-base">
+                    Explore All Tools <ChevronRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </Link>
+                <Link to="/tools/pdf/merge-pdf">
+                  <Button variant="outline" size="lg" className="h-12 px-8 text-base">
                     Merge PDF
-                  </a>
-                </li>
-              </ul>
+                  </Button>
+                </Link>
+              </div>
             </div>
-            <div>
-              <h4 className="mb-4 font-semibold text-foreground">Company</h4>
-              <ul className="space-y-2">
-                <li>
-                  <a
-                    href="#"
-                    className="text-sm text-foreground/70 hover:text-foreground transition-colors"
+
+            {/* Featured Tools Grid */}
+            <div className="mt-20 grid grid-cols-1 gap-6 sm:grid-cols-3 animate-fade-in" style={{ animationDelay: "300ms" }}>
+              {featuredTools.map((tool, index) => {
+                const Icon = tool.icon;
+                return (
+                  <Link
+                    key={index}
+                    to={tool.href}
+                    className="group relative overflow-hidden rounded-2xl border border-border bg-card p-6 transition-all hover:shadow-lg hover:-translate-y-1"
                   >
-                    About
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="text-sm text-foreground/70 hover:text-foreground transition-colors"
-                  >
-                    Blog
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="text-sm text-foreground/70 hover:text-foreground transition-colors"
-                  >
-                    Contact
-                  </a>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="mb-4 font-semibold text-foreground">Legal</h4>
-              <ul className="space-y-2">
-                <li>
-                  <a
-                    href="#"
-                    className="text-sm text-foreground/70 hover:text-foreground transition-colors"
-                  >
-                    Privacy
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="text-sm text-foreground/70 hover:text-foreground transition-colors"
-                  >
-                    Terms
-                  </a>
-                </li>
-              </ul>
+                    <div className={`mb-4 inline-flex rounded-xl ${tool.bg} p-3 ${tool.color}`}>
+                      <Icon className="h-6 w-6" />
+                    </div>
+                    <h3 className="text-xl font-semibold mb-2">{tool.title}</h3>
+                    <p className="text-muted-foreground text-sm">{tool.description}</p>
+                    <div className="mt-4 flex items-center text-sm font-medium text-primary opacity-0 -translate-x-2 transition-all group-hover:opacity-100 group-hover:translate-x-0">
+                      Try now <ChevronRight className="h-4 w-4 ml-1" />
+                    </div>
+                  </Link>
+                );
+              })}
             </div>
           </div>
-          <div className="mt-12 border-t border-border pt-8">
-            <p className="text-center text-sm text-foreground/70">
-              © 2024 PDF Pro. All rights reserved.
-            </p>
+        </section>
+
+        {/* Value Props */}
+        <section id="features" className="py-20 border-t border-border bg-muted/30">
+          <div className="container-custom">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl font-bold mb-4">Why Students Love Us</h2>
+              <p className="text-muted-foreground">Everything you need to boost your productivity</p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div className="flex flex-col items-center text-center p-6">
+                <div className="h-12 w-12 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center mb-4">
+                  <Zap className="h-6 w-6" />
+                </div>
+                <h3 className="text-lg font-semibold mb-2">Lightning Fast</h3>
+                <p className="text-muted-foreground text-sm">
+                  Instant results for GPA calculations and document conversions. No waiting around.
+                </p>
+              </div>
+              <div className="flex flex-col items-center text-center p-6">
+                <div className="h-12 w-12 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mb-4">
+                  <Shield className="h-6 w-6" />
+                </div>
+                <h3 className="text-lg font-semibold mb-2">Secure & Private</h3>
+                <p className="text-muted-foreground text-sm">
+                  Your files are encrypted and automatically deleted after 1 hour. We respect your privacy.
+                </p>
+              </div>
+              <div className="flex flex-col items-center text-center p-6">
+                <div className="h-12 w-12 rounded-full bg-violet-100 text-violet-600 flex items-center justify-center mb-4">
+                  <Laptop className="h-6 w-6" />
+                </div>
+                <h3 className="text-lg font-semibold mb-2">All-in-One Platform</h3>
+                <p className="text-muted-foreground text-sm">
+                  Stop switching between 10 different websites. Get all your tools in one place.
+                </p>
+              </div>
+            </div>
           </div>
+        </section>
+      </main>
+
+      <footer className="border-t border-border py-8 bg-muted/50">
+        <div className="container-custom text-center text-sm text-muted-foreground">
+          <p>© {new Date().getFullYear()} StudentHub. Built for student success.</p>
         </div>
       </footer>
     </div>

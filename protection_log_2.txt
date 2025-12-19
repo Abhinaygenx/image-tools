@@ -1,0 +1,30 @@
+client/pages/tools/pdf/ProtectPdf.tsx(42,20): error TS2339: Property 'encrypt' does not exist on type 'PDFDocument'.
+client/pages/tools/pdf/SplitPdf.tsx(85,32): error TS2322: Type 'Uint8Array<ArrayBufferLike>' is not assignable to type 'BlobPart'.
+  Type 'Uint8Array<ArrayBufferLike>' is not assignable to type 'ArrayBufferView<ArrayBuffer>'.
+    Types of property 'buffer' are incompatible.
+      Type 'ArrayBufferLike' is not assignable to type 'ArrayBuffer'.
+        Type 'SharedArrayBuffer' is not assignable to type 'ArrayBuffer'.
+          Types of property '[Symbol.toStringTag]' are incompatible.
+            Type '"SharedArrayBuffer"' is not assignable to type '"ArrayBuffer"'.
+server/routes/compress-pdf.ts(7,22): error TS2339: Property 'file' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+server/routes/compress-pdf.ts(7,38): error TS2694: Namespace 'global.Express' has no exported member 'Multer'.
+server/routes/compress-pdf.ts(42,47): error TS2339: Property 'copy' does not exist on type 'typeof PDFDocument'.
+server/routes/image-to-word.ts(18,23): error TS2339: Property 'files' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+server/routes/image-to-word.ts(18,40): error TS2694: Namespace 'global.Express' has no exported member 'Multer'.
+server/routes/image-to-word.ts(53,9): error TS2353: Object literal may only specify known properties, and 'bold' does not exist in type 'IParagraphOptions'.
+server/routes/image-to-word.ts(74,13): error TS2353: Object literal may only specify known properties, and 'bold' does not exist in type 'IParagraphOptions'.
+server/routes/image-to-word.ts(107,15): error TS2353: Object literal may only specify known properties, and 'italics' does not exist in type 'IParagraphOptions'.
+server/routes/image-to-word.ts(129,13): error TS2353: Object literal may only specify known properties, and 'italics' does not exist in type 'IParagraphOptions'.
+server/routes/images-to-pdf.ts(8,23): error TS2339: Property 'files' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+server/routes/images-to-pdf.ts(8,40): error TS2694: Namespace 'global.Express' has no exported member 'Multer'.
+server/routes/merge-pdf.ts(7,23): error TS2339: Property 'files' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+server/routes/merge-pdf.ts(7,40): error TS2694: Namespace 'global.Express' has no exported member 'Multer'.
+server/routes/merge-pdf.ts(80,52): error TS2554: Expected 0-1 arguments, but got 2.
+server/routes/pdf-to-word.ts(8,22): error TS2339: Property 'file' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+server/routes/pdf-to-word.ts(8,38): error TS2694: Namespace 'global.Express' has no exported member 'Multer'.
+server/routes/pdf-to-word.ts(70,9): error TS2353: Object literal may only specify known properties, and 'bold' does not exist in type 'IParagraphOptions'.
+server/routes/protect-pdf.ts(7,22): error TS2339: Property 'file' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+server/routes/protect-pdf.ts(7,38): error TS2694: Namespace 'global.Express' has no exported member 'Multer'.
+server/routes/protect-pdf.ts(94,28): error TS2345: Argument of type 'PDFEmbeddedPage' is not assignable to parameter of type 'PDFPage | [number, number]'.
+  Type 'PDFEmbeddedPage' is missing the following properties from type 'PDFPage': node, fontSize, fontColor, lineHeight, and 53 more.
+server/routes/protect-pdf.ts(98,24): error TS2339: Property 'encrypt' does not exist on type 'PDFDocument'.

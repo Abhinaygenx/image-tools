@@ -1,21 +1,9 @@
 import { useState, useRef } from "react";
 import { Link } from "react-router-dom";
-import {
-  FileText,
-  ArrowLeft,
-  Upload,
-  X,
-  Download,
-  Loader,
-  Eye,
-  EyeOff,
-} from "lucide-react";
+import { FileText, ArrowLeft, Upload, X, Download, Loader } from "lucide-react";
 
-export default function ProtectPdf() {
+export default function PdfToWord() {
   const [pdfFile, setPdfFile] = useState<File | null>(null);
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
   const [isConverting, setIsConverting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -51,24 +39,9 @@ export default function ProtectPdf() {
     handleFileSelect(e.dataTransfer.files);
   };
 
-  const handleProtect = async () => {
+  const handleConvert = async () => {
     if (!pdfFile) {
       setError("Please select a PDF file");
-      return;
-    }
-
-    if (!password || password.trim().length === 0) {
-      setError("Please enter a password");
-      return;
-    }
-
-    if (password.length < 4) {
-      setError("Password must be at least 4 characters long");
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      setError("Passwords do not match");
       return;
     }
 
@@ -77,32 +50,96 @@ export default function ProtectPdf() {
     setSuccess(false);
 
     try {
-      const formData = new FormData();
-      formData.append("pdf", pdfFile);
-      formData.append("password", password);
+      const arrayBuffer = await pdfFile.arrayBuffer();
 
-      const response = await fetch("/api/convert/protect-pdf", {
-        method: "POST",
-        body: formData,
-      });
+      // Implement robust conversion using 'docx' library
+      const { Document, Packer, Paragraph, TextRun } = await import("docx");
+      const pdfjsLib = await import("pdfjs-dist");
 
-      if (!response.ok) {
-        let errorMessage = "Protection failed";
-        try {
-          const errorData = await response.json();
-          errorMessage = errorData.error || errorMessage;
-        } catch {
-          errorMessage = "Failed to protect PDF";
+      pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
+
+      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+      const docParagraphs: any[] = [];
+
+      for (let i = 1; i <= pdf.numPages; i++) {
+        const page = await pdf.getPage(i);
+        const textContent = await page.getTextContent();
+
+        // Basic layout preservation attempts:
+        // We'll treat every item with a significant Y difference as a new paragraph.
+        // This is a naive implementation but better than a single blob of text.
+
+        let lastY = -1;
+        let currentLineText = "";
+
+        // Sort items by Y (descending - top to bottom) then X (ascending - left to right)
+        const items = textContent.items.map((item: any) => ({
+          str: item.str,
+          x: item.transform[4],
+          y: item.transform[5],
+          height: item.height || 0
+        })).sort((a: any, b: any) => {
+          if (Math.abs(b.y - a.y) > 5) return b.y - a.y; // Different lines
+          return a.x - b.x; // Same line, sort left to right
+        });
+
+
+        items.forEach((item: any) => {
+          // If it's a new line (significant Y difference)
+          if (lastY !== -1 && Math.abs(item.y - lastY) > 10) {
+            if (currentLineText.trim()) {
+              docParagraphs.push(
+                new Paragraph({
+                  children: [new TextRun(currentLineText)],
+                  spacing: { after: 120 } // slight spacing
+                })
+              );
+            }
+            currentLineText = "";
+          }
+
+          currentLineText += item.str + " ";
+          lastY = item.y;
+        });
+
+        // Flush last line of page
+        if (currentLineText.trim()) {
+          docParagraphs.push(
+            new Paragraph({
+              children: [new TextRun(currentLineText)],
+              spacing: { after: 200 } // Page break spacing simulation
+            })
+          );
         }
-        throw new Error(errorMessage);
+
+        // Add a page break after each PDF page except the last
+        if (i < pdf.numPages) {
+          // docx doesn't have explicit page break in quite this way in all versions, 
+          // but we can add a page break to the last paragraph of the page or a specialized break.
+          // For simplicity, we just add a spacing or empty paragraph with page break.
+          docParagraphs.push(new Paragraph({ children: [], pageBreakBefore: true }));
+        }
       }
 
-      // Download the protected PDF
-      const blob = await response.blob();
+      if (docParagraphs.length === 0) {
+        throw new Error("No text found in PDF. It might be scanned or image-based.");
+      }
+
+      const doc = new Document({
+        sections: [
+          {
+            properties: {},
+            children: docParagraphs,
+          },
+        ],
+      });
+
+      const blob = await Packer.toBlob(doc);
+
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `protected-${Date.now()}.pdf`;
+      a.download = `converted-${Date.now()}.docx`;
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
@@ -111,12 +148,12 @@ export default function ProtectPdf() {
       setSuccess(true);
       setTimeout(() => {
         setPdfFile(null);
-        setPassword("");
-        setConfirmPassword("");
         setSuccess(false);
       }, 3000);
+
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Protection failed");
+      console.error(err);
+      setError(err instanceof Error ? err.message : "Conversion failed");
     } finally {
       setIsConverting(false);
     }
@@ -146,9 +183,9 @@ export default function ProtectPdf() {
       <main className="container-custom py-12 sm:py-16">
         <div className="mx-auto max-w-2xl">
           <div className="mb-8">
-            <h1 className="text-4xl font-bold sm:text-5xl">Protect PDF</h1>
+            <h1 className="text-4xl font-bold sm:text-5xl">PDF to Word</h1>
             <p className="mt-2 text-lg text-foreground/70">
-              Add password protection to your PDF documents
+              Convert PDF documents to editable Word format
             </p>
           </div>
 
@@ -206,7 +243,9 @@ export default function ProtectPdf() {
           {success && (
             <div className="mb-6 flex items-center gap-3 rounded-lg border border-green-500/30 bg-green-500/10 p-4 text-green-700">
               <div className="flex-1">
-                <p className="font-medium">✓ PDF protected successfully!</p>
+                <p className="font-medium">
+                  ✓ Word document created successfully!
+                </p>
               </div>
             </div>
           )}
@@ -217,7 +256,7 @@ export default function ProtectPdf() {
               <h3 className="mb-4 text-lg font-semibold text-foreground">
                 Selected File
               </h3>
-              <div className="card-base flex items-center justify-between mb-6">
+              <div className="card-base flex items-center justify-between">
                 <div>
                   <p className="font-medium text-foreground">{pdfFile.name}</p>
                   <p className="mt-1 text-sm text-foreground/70">
@@ -230,51 +269,6 @@ export default function ProtectPdf() {
                 >
                   <X className="h-5 w-5" />
                 </button>
-              </div>
-
-              {/* Password Form */}
-              <div className="card-base space-y-4">
-                <div>
-                  <label className="block text-sm font-semibold text-foreground mb-2">
-                    Password
-                  </label>
-                  <div className="relative">
-                    <input
-                      type={showPassword ? "text" : "password"}
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      placeholder="Enter password (min 4 characters)"
-                      className="w-full rounded-lg border border-border bg-background px-4 py-2 text-foreground placeholder-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-foreground/50 hover:text-foreground"
-                    >
-                      {showPassword ? (
-                        <EyeOff className="h-5 w-5" />
-                      ) : (
-                        <Eye className="h-5 w-5" />
-                      )}
-                    </button>
-                  </div>
-                  <p className="mt-1 text-xs text-foreground/50">
-                    Min 4 characters. Choose a strong password.
-                  </p>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-semibold text-foreground mb-2">
-                    Confirm Password
-                  </label>
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    placeholder="Re-enter password"
-                    className="w-full rounded-lg border border-border bg-background px-4 py-2 text-foreground placeholder-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary"
-                  />
-                </div>
               </div>
             </div>
           )}
@@ -290,19 +284,19 @@ export default function ProtectPdf() {
               </button>
             )}
             <button
-              onClick={handleProtect}
-              disabled={!pdfFile || !password || isConverting}
+              onClick={handleConvert}
+              disabled={!pdfFile || isConverting}
               className="btn-primary flex-1 flex items-center justify-center gap-2"
             >
               {isConverting ? (
                 <>
                   <Loader className="h-5 w-5 animate-spin" />
-                  Protecting...
+                  Converting...
                 </>
               ) : (
                 <>
                   <Download className="h-5 w-5" />
-                  Protect PDF
+                  Convert to Word
                 </>
               )}
             </button>
@@ -323,29 +317,25 @@ export default function ProtectPdf() {
               </li>
               <li className="flex gap-3">
                 <span className="font-semibold text-primary">2.</span>
-                <span>
-                  Enter and confirm your desired password (minimum 4 characters)
-                </span>
+                <span>Our system extracts all text content from the PDF</span>
               </li>
               <li className="flex gap-3">
                 <span className="font-semibold text-primary">3.</span>
-                <span>Click "Protect PDF" to add password protection</span>
+                <span>
+                  Click "Convert to Word" to create an editable document
+                </span>
               </li>
               <li className="flex gap-3">
                 <span className="font-semibold text-primary">4.</span>
-                <span>Download your protected PDF file</span>
+                <span>Download your Word file and edit it as needed</span>
               </li>
             </ul>
-            <div className="mt-6 pt-6 border-t border-border space-y-3">
+            <div className="mt-6 pt-6 border-t border-border">
               <p className="text-sm text-foreground/70">
-                <strong>Security:</strong> Password protection prevents
-                unauthorized access to your PDF. Users will need to enter the
-                password to open the document.
-              </p>
-              <p className="text-sm text-foreground/70">
-                <strong>Restrictions:</strong> The protected PDF will have
-                restrictions on copying, printing, and editing unless the
-                password is provided.
+                <strong>Note:</strong> The conversion extracts text content from
+                your PDF. If your PDF is image-based or scanned, the conversion
+                may not work. For best results, use PDFs with embedded text
+                content.
               </p>
             </div>
           </div>
