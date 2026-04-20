@@ -55,8 +55,8 @@ export default function WordToPdf() {
 
     return (
         <BaseTool
-            title="Word to PDF"
-            description="Convert DOC and DOCX files to PDF documents."
+            title="Word to PDF (DOCX)"
+            description="Convert Microsoft Word DOC and DOCX files to PDF documents."
             icon={FileText}
             acceptedFileTypes={{
                 "application/msword": [".doc"],

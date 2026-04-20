@@ -35,8 +35,12 @@ import ExcelToPdf from "./pages/tools/converters/ExcelToPdf";
 import PdfToExcel from "./pages/tools/converters/PdfToExcel";
 import PptToPdf from "./pages/tools/converters/PptToPdf";
 import PdfToPpt from "./pages/tools/converters/PdfToPpt";
+import TxtToPdf from "./pages/tools/converters/TxtToPdf";
+import PdfToTxt from "./pages/tools/converters/PdfToTxt";
 import PomodoroTimer from "./pages/tools/academic/PomodoroTimer";
 import ImagesToPdf from "./pages/tools/pdf/ImagesToPdf";
+import WebpToPng from "./pages/tools/image/WebpToPng";
+import PngToWebp from "./pages/tools/image/PngToWebp";
 import NotFound from "./pages/NotFound";
 
 import AdminRoute from "./components/AdminRoute";
@@ -85,6 +89,9 @@ function Router() {
       <Route path="/tools/converters/pdf-to-excel" element={<PdfToExcel />} />
       <Route path="/tools/converters/ppt-to-pdf" element={<PptToPdf />} />
       <Route path="/tools/converters/pdf-to-ppt" element={<PdfToPpt />} />
+      <Route path="/tools/converters/txt-to-pdf" element={<TxtToPdf />} />
+      <Route path="/tools/converters/pdf-to-txt" element={<PdfToTxt />} />
+
 
 
       {/* Academic (Free) */}
@@ -102,6 +109,8 @@ function Router() {
       {/* Media Tools (Mixed) */}
       <Route path="/tools/image/jpg-to-png" element={<JpgToPng />} />
       <Route path="/tools/image/png-to-jpg" element={<PngToJpg />} />
+      <Route path="/tools/image/webp-to-png" element={<WebpToPng />} />
+      <Route path="/tools/image/png-to-webp" element={<PngToWebp />} />
 
       {/* Protected Media Tool */}
       <Route path="/tools/image/compress" element={
