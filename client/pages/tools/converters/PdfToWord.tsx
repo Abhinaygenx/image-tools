@@ -3,11 +3,20 @@ import { FileText } from "lucide-react";
 
 export default function PdfToWord() {
     const handleProcess = async (file: File) => {
-        await new Promise(resolve => setTimeout(resolve, 2000));
-        // Mock result: simple text file renamed to .docx for demonstration
-        // In a real app we would use server-side conversion or specialized complex browser libs like docx
-        const blob = new Blob(["This is a demonstration of the converted DOCX content."], { type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
-        return blob;
+        const formData = new FormData();
+        formData.append("pdf", file);
+
+        const response = await fetch("/api/convert/pdf-to-word", {
+            method: "POST",
+            body: formData,
+        });
+
+        if (!response.ok) {
+            const error = await response.json().catch(() => ({}));
+            throw new Error(error.error || "Failed to convert PDF to Word");
+        }
+
+        return await response.blob();
     };
 
     return (
