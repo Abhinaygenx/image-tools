@@ -1,6 +1,6 @@
 import { RequestHandler } from "express";
 import pdfParse from "pdf-parse";
-import { Document, Packer, Paragraph } from "docx";
+import { Document, Packer, Paragraph, TextRun } from "docx";
 
 export const handlePdfToWord: RequestHandler = async (req, res) => {
   try {
@@ -63,14 +63,18 @@ export const handlePdfToWord: RequestHandler = async (req, res) => {
     // Create paragraphs, preserving the original spacing and structure
     const documentParagraphs = [
       new Paragraph({
-        text: `Converted from: ${file.originalname}`,
+        children: [
+          new TextRun({
+            text: `Converted from: ${file.originalname}`,
+            bold: true,
+          }),
+        ],
         spacing: {
           after: 400,
         },
-        bold: true,
       }),
       new Paragraph({
-        text: "",
+        children: [new TextRun({ text: "" })],
         spacing: {
           after: 200,
         },
@@ -78,7 +82,7 @@ export const handlePdfToWord: RequestHandler = async (req, res) => {
       ...lines.map(
         (line) =>
           new Paragraph({
-            text: line || "", // Preserve empty lines for spacing
+            children: [new TextRun({ text: line || "" })],
             spacing: {
               line: 240,
               after: 0,

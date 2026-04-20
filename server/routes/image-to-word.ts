@@ -3,6 +3,7 @@ import {
   Document,
   Packer,
   Paragraph,
+  TextRun,
   Table,
   TableCell,
   TableRow,
@@ -46,14 +47,18 @@ export const handleImageToWord: RequestHandler = async (req, res) => {
     // Process images and extract text using OCR
     const documentParagraphs = [
       new Paragraph({
-        text: `Document created from ${files.length} image(s)`,
+        children: [
+          new TextRun({
+            text: `Document created from ${files.length} image(s)`,
+            bold: true,
+          }),
+        ],
         spacing: {
           after: 400,
         },
-        bold: true,
       }),
       new Paragraph({
-        text: "",
+        children: [new TextRun({ text: "" })],
         spacing: {
           after: 200,
         },
@@ -67,11 +72,15 @@ export const handleImageToWord: RequestHandler = async (req, res) => {
         // Add image header
         documentParagraphs.push(
           new Paragraph({
-            text: `Image ${i + 1}: ${file.originalname}`,
+            children: [
+              new TextRun({
+                text: `Image ${i + 1}: ${file.originalname}`,
+                bold: true,
+              }),
+            ],
             spacing: {
               after: 200,
             },
-            bold: true,
           }),
         );
 
@@ -89,7 +98,7 @@ export const handleImageToWord: RequestHandler = async (req, res) => {
           textLines.forEach((line) => {
             documentParagraphs.push(
               new Paragraph({
-                text: line,
+                children: [new TextRun({ text: line })],
                 spacing: {
                   line: 240,
                   after: 0,
@@ -100,11 +109,15 @@ export const handleImageToWord: RequestHandler = async (req, res) => {
         } else {
           documentParagraphs.push(
             new Paragraph({
-              text: "[No text detected in image]",
+              children: [
+                new TextRun({
+                  text: "[No text detected in image]",
+                  italics: true,
+                }),
+              ],
               spacing: {
                 after: 200,
               },
-              italics: true,
             }),
           );
         }
@@ -112,7 +125,7 @@ export const handleImageToWord: RequestHandler = async (req, res) => {
         // Add separator
         documentParagraphs.push(
           new Paragraph({
-            text: "",
+            children: [new TextRun({ text: "" })],
             spacing: {
               after: 400,
             },
@@ -122,11 +135,15 @@ export const handleImageToWord: RequestHandler = async (req, res) => {
         console.error(`Error processing image ${file.originalname}:`, error);
         documentParagraphs.push(
           new Paragraph({
-            text: `[Error processing image: ${file.originalname}]`,
+            children: [
+              new TextRun({
+                text: `[Error processing image: ${file.originalname}]`,
+                italics: true,
+              }),
+            ],
             spacing: {
               after: 200,
             },
-            italics: true,
           }),
         );
       }
