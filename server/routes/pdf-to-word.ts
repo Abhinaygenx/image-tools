@@ -79,17 +79,19 @@ export const handlePdfToWord: RequestHandler = async (req, res) => {
           after: 200,
         },
       }),
-      ...lines.map(
-        (line) =>
-          new Paragraph({
-            children: [new TextRun({ text: line || "" })],
-            spacing: {
-              line: 240,
-              after: 0,
-            },
-          }),
-      ),
     ];
+
+    for (const line of lines) {
+      documentParagraphs.push(
+        new Paragraph({
+          children: [new TextRun({ text: line || "" })],
+          spacing: {
+            line: 240,
+            after: 0,
+          },
+        })
+      );
+    }
 
     // Create Word document
     const doc = new Document({
@@ -117,8 +119,12 @@ export const handlePdfToWord: RequestHandler = async (req, res) => {
 
     // Send the document
     res.send(buffer);
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error converting PDF to Word:", error);
+    try {
+      require("fs").appendFileSync("debug_pdf_error.log", `${new Date().toISOString()} - ${error.stack || error.message || error}\n`);
+    } catch (e) {}
+
     res.status(500).json({
       error: "Failed to convert PDF to Word",
       success: false,
