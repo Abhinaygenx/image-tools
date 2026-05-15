@@ -37,6 +37,7 @@ import PptToPdf from "./pages/tools/converters/PptToPdf";
 import PdfToPpt from "./pages/tools/converters/PdfToPpt";
 import TxtToPdf from "./pages/tools/converters/TxtToPdf";
 import PdfToTxt from "./pages/tools/converters/PdfToTxt";
+import PdfToDocx from "./pages/tools/converters/PdfToDocx";
 import PomodoroTimer from "./pages/tools/academic/PomodoroTimer";
 import ImagesToPdf from "./pages/tools/pdf/ImagesToPdf";
 import WebpToPng from "./pages/tools/image/WebpToPng";
@@ -91,6 +92,7 @@ function Router() {
       <Route path="/tools/converters/pdf-to-ppt" element={<PdfToPpt />} />
       <Route path="/tools/converters/txt-to-pdf" element={<TxtToPdf />} />
       <Route path="/tools/converters/pdf-to-txt" element={<PdfToTxt />} />
+      <Route path="/tools/converters/pdf-to-docx" element={<PdfToDocx />} />
 
 
 

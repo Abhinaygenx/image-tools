@@ -221,6 +221,17 @@ export default function ToolsMarketplace() {
             color: "from-slate-600 to-slate-700",
             lightColor: "from-slate-50 to-slate-100",
         },
+        {
+            id: "conv-9",
+            category: "converters",
+            title: "PDF to DOCX",
+            description: "Convert PDF to DOCX format.",
+            icon: FileText,
+            to: "/tools/converters/pdf-to-docx",
+            isNew: true,
+            color: "from-blue-600 to-blue-700",
+            lightColor: "from-blue-50 to-blue-100",
+        },
         // Academic Tools
         {
             id: "acad-1",
